@@ -21,7 +21,7 @@ private slots:
 
 private:
     Ui::loginwidget *ui;
-     myWidget w;
+    myWidget w;
 };
 
 #endif // LOGINWIDGET_H
