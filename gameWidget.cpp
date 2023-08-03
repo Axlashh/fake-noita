@@ -1,25 +1,22 @@
-#include "mywidget.h"
-#include "ui_mywidget.h"
+#include "gameWidget.h"
+#include "ui_gameWidget.h"
 #include<QPushButton>
 #include<QFile>
 #include<QFileDialog>
 #include<QTextStream>
 #include<QMessageBox>
 
-myWidget::myWidget(QWidget *parent) :
+gameWidget::gameWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::myWidget)
+    ui(new Ui::gameWidget)
 {
     ui->setupUi(this);
+    connect(ui->quitButton, &QPushButton::clicked, this, [=](){
+        this->hide();
+    });
 }
 
-myWidget::~myWidget()
+gameWidget::~gameWidget()
 {
     delete ui;
-}
-
-
-void myWidget::on_button2_clicked()
-{
-    hide();
 }

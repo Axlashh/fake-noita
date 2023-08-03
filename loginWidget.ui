@@ -25,7 +25,6 @@
    <property name="font">
     <font>
      <pointsize>20</pointsize>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -57,7 +56,7 @@
      </spacer>
     </item>
     <item>
-     <widget class="QPushButton" name="button1">
+     <widget class="QPushButton" name="registerButton">
       <property name="text">
        <string>注册</string>
       </property>
@@ -77,7 +76,7 @@
      </spacer>
     </item>
     <item>
-     <widget class="QPushButton" name="button2">
+     <widget class="QPushButton" name="loginButton">
       <property name="text">
        <string>登录</string>
       </property>
@@ -110,7 +109,6 @@
    <property name="font">
     <font>
      <pointsize>12</pointsize>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -130,7 +128,6 @@
    <property name="font">
     <font>
      <pointsize>12</pointsize>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>

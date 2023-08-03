@@ -1,11 +1,12 @@
-#include "mywidget.h"
+#include "gameWidget.h"
 #include <QApplication>
-#include"loginwidget.h"
+#include"loginWidget.h"
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    loginwidget w;
+    loginWidget w;
     w.show();
 
     return a.exec();

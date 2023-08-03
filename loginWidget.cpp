@@ -1,20 +1,18 @@
-#include "loginwidget.h"
-#include "ui_loginwidget.h"
+#include "loginWidget.h"
+#include "ui_loginWidget.h"
 
-loginwidget::loginwidget(QWidget *parent) :
+loginWidget::loginWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::loginwidget)
+    ui(new Ui::loginWidget)
 {
     ui->setupUi(this);
+    connect(ui->loginButton, &QPushButton::clicked, this, [=](){
+        w.show();
+        this->hide();
+    });
 }
 
-loginwidget::~loginwidget()
+loginWidget::~loginWidget()
 {
     delete ui;
-}
-
-void loginwidget::on_button2_clicked()
-{
-    w.show();
-    this->hide();
 }

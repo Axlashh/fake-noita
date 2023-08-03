@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>myWidget</class>
- <widget class="QWidget" name="myWidget">
+ <class>gameWidget</class>
+ <widget class="QWidget" name="gameWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -31,7 +31,6 @@
    <property name="font">
     <font>
      <pointsize>25</pointsize>
-     <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
@@ -69,7 +68,7 @@
      </spacer>
     </item>
     <item>
-     <widget class="QPushButton" name="button1">
+     <widget class="QPushButton" name="startButton">
       <property name="text">
        <string>开始游戏</string>
       </property>
@@ -89,7 +88,7 @@
      </spacer>
     </item>
     <item>
-     <widget class="QPushButton" name="button2">
+     <widget class="QPushButton" name="quitButton">
       <property name="text">
        <string>退出游戏</string>
       </property>

@@ -9,22 +9,25 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    loginwidget.cpp \
+    gameWidget.cpp \
+    loginWidget.cpp \
     main.cpp \
-    mywidget.cpp \
-    widget.cpp
+    registerwidget.cpp
 
 HEADERS += \
-    loginwidget.h \
-    mywidget.h \
-    widget.h
+    gameWidget.h \
+    loginWidget.h \
+    registerwidget.h
 
 FORMS += \
-    loginwidget.ui \
-    mywidget.ui \
-    widget.ui
+    gameWidget.ui \
+    loginWidget.ui \
+    registerwidget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    handTrack.py

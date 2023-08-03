@@ -1,27 +1,26 @@
-#ifndef MYWIDGET_H
-#define MYWIDGET_H
+#ifndef GAMEWIDGET_H
+#define GAMEWIDGET_H
 
 #include <QWidget>
 
 namespace Ui {
-class myWidget;
+class gameWidget;
 }
 
-class myWidget : public QWidget
+class gameWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit myWidget(QWidget *parent = 0);
-    ~myWidget();
+    explicit gameWidget(QWidget *parent = 0);
+    ~gameWidget();
 
 private slots:
 
-    void on_button2_clicked();
 
 private:
-    Ui::myWidget *ui;
+    Ui::gameWidget *ui;
 };
 
-#endif // MYWIDGET_H
+#endif // GAMEWIDGET_H
 

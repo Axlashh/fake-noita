@@ -2,26 +2,25 @@
 #define LOGINWIDGET_H
 
 #include <QWidget>
-#include"mywidget.h"
+#include"gameWidget.h"
 
 namespace Ui {
-class loginwidget;
+class loginWidget;
 }
 
-class loginwidget : public QWidget
+class loginWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit loginwidget(QWidget *parent = 0);
-    ~loginwidget();
+    explicit loginWidget(QWidget *parent = 0);
+    ~loginWidget();
 
 private slots:
-    void on_button2_clicked();
 
 private:
-    Ui::loginwidget *ui;
-    myWidget w;
+    Ui::loginWidget *ui;
+    gameWidget w;
 };
 
 #endif // LOGINWIDGET_H
