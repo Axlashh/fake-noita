@@ -2,7 +2,8 @@
 #define GAMEWIDGET_H
 
 #include <QWidget>
-#include "func.h"
+#include <QtConcurrent>
+#include "others.h"
 
 namespace Ui {
 class gameWidget;
@@ -15,12 +16,13 @@ class gameWidget : public QWidget
 public:
     explicit gameWidget(QWidget *parent = 0);
     ~gameWidget();
+    Ui::gameWidget *ui;
 
 private slots:
 
 
 private:
-    Ui::gameWidget *ui;
+
 };
 
 #endif // GAMEWIDGET_H

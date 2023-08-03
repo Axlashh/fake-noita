@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "gameWidget.h"
+#include "ui_gameWidget.h"
 
 namespace Ui {
 class loginWidget;
@@ -21,6 +22,7 @@ private slots:
 private:
     Ui::loginWidget *ui;
     gameWidget w;
+    cutfruitThread *cf;
 };
 
 #endif // LOGINWIDGET_H

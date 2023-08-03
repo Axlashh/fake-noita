@@ -18,6 +18,7 @@ gameWidget::gameWidget(QWidget *parent) :
     cv::Mat s(3, 3, CV_8UC1);
     cv::randu(s, cv::Scalar(0), cv::Scalar(255));
     displayImg(this->ui->gameLabel, s);
+
 }
 
 gameWidget::~gameWidget()
