@@ -1,20 +1,30 @@
 QT       += core gui
+QT       += concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
+
+INCLUDEPATH +=  D:\AAAAAAA\documents\opencv\build\include\
+                D:\AAAAAAA\documents\opencv\build\include\opencv2\
+
+
+LIBS += -L D:\AAAAAAA\documents\opencv\build\x64\MinGW\lib\libopencv_*.a
+
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    func.cpp \
     gameWidget.cpp \
     loginWidget.cpp \
     main.cpp \
     registerwidget.cpp
 
 HEADERS += \
+    func.h \
     gameWidget.h \
     loginWidget.h \
     registerwidget.h
