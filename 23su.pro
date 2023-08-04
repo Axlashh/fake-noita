@@ -6,14 +6,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += c++17
 
 INCLUDEPATH +=  D:\AAAAAAA\documents\opencv\build\include\
-                D:\AAAAAAA\documents\opencv\build\include\opencv2\
-                C:\Users\Axlash\AppData\Local\Programs\Python\Python39\include\
-                C:\Users\Axlash\AppData\Local\Programs\Python\Python39\Lib\site-packages\numpy\core\include\
-
-
-
-LIBS += -L D:\AAAAAAA\documents\opencv\build\x64\MinGW\lib\libopencv_*.a
-LIBS += -LC:\Users\Axlash\AppData\Local\Programs\Python\Python39\libs\ -lpython39 -l_tkinter -lpython3
+                extern\
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -44,3 +37,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     handTrack.py
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/extern/lib/ -lbox2
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/extern/lib/ -lbox2d
+else:unix: LIBS += -L$$PWD/extern/lib/ -lbox2
+
+INCLUDEPATH += $$PWD/extern
+DEPENDPATH += $$PWD/extern

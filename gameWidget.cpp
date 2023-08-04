@@ -15,10 +15,7 @@ gameWidget::gameWidget(QWidget *parent) :
     connect(ui->quitButton, &QPushButton::clicked, this, [=](){
         this->hide();
     });
-    cv::Mat s(3, 3, CV_8UC1);
-    cv::randu(s, cv::Scalar(0), cv::Scalar(255));
-    displayImg(this->ui->gameLabel, s);
-
+    Box2DWidget a(this);
 }
 
 gameWidget::~gameWidget()

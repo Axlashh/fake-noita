@@ -22,7 +22,6 @@ private slots:
 private:
     Ui::loginWidget *ui;
     gameWidget w;
-    cutfruitThread *cf;
 };
 
 #endif // LOGINWIDGET_H
