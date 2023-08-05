@@ -18,11 +18,23 @@ public:
     ~gameWidget();
     Ui::gameWidget *ui;
 
+protected:
+    void paintEvent(QPaintEvent* event) override;
+
 private slots:
 
 
 private:
-
+    void initializeWorld();
+    void createPlayer();
+    void createMap();
+    const float PPM = 30; //pixels per meter
+    QTransform *transformer;
+    QImage playerImg;
+    QTimer *timer;
+    b2World *world;
+    people *player;
+    b2Body *ground;
 };
 
 #endif // GAMEWIDGET_H

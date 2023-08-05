@@ -6,7 +6,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    Box2DWidget aaa;
+    gameWidget aaa;
     aaa.show();
 //    loginWidget w;
 //    w.show();

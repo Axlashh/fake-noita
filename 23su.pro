@@ -13,16 +13,20 @@ INCLUDEPATH +=  D:\AAAAAAA\documents\opencv\build\include\
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    character.cpp \
     gameWidget.cpp \
     loginWidget.cpp \
     main.cpp \
     others.cpp \
+    people.cpp \
     registerwidget.cpp
 
 HEADERS += \
+    character.h \
     gameWidget.h \
     loginWidget.h \
     others.h \
+    people.h \
     registerwidget.h
 
 FORMS += \
