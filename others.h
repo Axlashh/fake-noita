@@ -11,8 +11,12 @@
 #include <QMatrix>
 #include <QTransform>
 #include <QDir>
+#include <QKeyEvent>
+
 #include <character.h>
 #include <people.h>
+
+#include <math.h>
 #include <box2d/box2d.h>
 
 
