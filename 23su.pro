@@ -19,7 +19,9 @@ SOURCES += \
     main.cpp \
     others.cpp \
     people.cpp \
-    registerwidget.cpp
+    registerwidget.cpp \
+    spell.cpp \
+    wand.cpp
 
 HEADERS += \
     character.h \
@@ -27,7 +29,9 @@ HEADERS += \
     loginWidget.h \
     others.h \
     people.h \
-    registerwidget.h
+    registerwidget.h \
+    spell.h \
+    wand.h
 
 FORMS += \
     gameWidget.ui \
