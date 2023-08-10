@@ -8,19 +8,11 @@ void sparkBolt::shoot(float x, float y, int degree) {
 
 }
 
-void sparkBolt::compute(wand *wd) {
-
-}
-
 sparkBoltt::sparkBoltt() {
 
 }
 
 void sparkBoltt::shoot(float x, float y, int degree) {
-
-}
-
-void sparkBoltt::compute(wand *wd){
 
 }
 
@@ -32,19 +24,11 @@ void energyOrb::shoot(float x, float y, int degree) {
 
 }
 
-void energyOrb::compute(wand *wd){
-
-}
-
 energyOrbt::energyOrbt() {
 
 }
 
 void energyOrbt::shoot(float x, float y, int degree) {
-
-}
-
-void energyOrbt::compute(wand *wd) {
 
 }
 
@@ -56,19 +40,11 @@ void chain::shoot(float x, float y, int degree) {
 
 }
 
-void chain::compute(wand *wd){
-
-}
-
 doubleSpell::doubleSpell() {
 
 }
 
 void doubleSpell::shoot(float x, float y, int degree) {
-
-}
-
-void doubleSpell::compute(wand *wd){
 
 }
 
@@ -80,19 +56,11 @@ void addMana::shoot(float x, float y, int degree) {
 
 }
 
-void addMana::compute(wand *wd) {
-
-}
-
 speedUp::speedUp() {
 
 }
 
 void speedUp::shoot(float x, float y, int degree) {
-
-}
-
-void speedUp::compute(wand *wd){
 
 }
 
@@ -104,7 +72,7 @@ void damagePlus::shoot(float x, float y, int degree) {
 
 }
 
-void damagePlus::compute(wand *wd){
+void spell::compute(wand *wd) {
 
 }
 

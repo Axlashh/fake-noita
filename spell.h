@@ -17,7 +17,7 @@ public:
     //法术发射
     virtual void shoot(float x, float y, int degree) = 0;
     //计算本次法术释放的情况
-    virtual void compute(wand *wd) = 0;
+    virtual void compute(wand *wd);
     int getMana();
 
 protected:
@@ -59,7 +59,6 @@ class sparkBolt : public spell
 public:
     sparkBolt();
     void shoot(float x, float y, int degree)	override;
-    void compute(wand *wd)				override;
 };
 
 //	带触发的火花弹
@@ -68,7 +67,6 @@ class sparkBoltt : public spell
 public:
     sparkBoltt();
     void shoot(float x, float y, int degree)	override;
-    void compute(wand *wd)				override;
 };
 
 //	能量球
@@ -77,7 +75,6 @@ class energyOrb : public spell
 public:
     energyOrb();
     void shoot(float x, float y, int degree)	override;
-    void compute(wand *wd)				override;
 };
 
 //	带触发的能量球
@@ -86,7 +83,6 @@ class energyOrbt : public spell
 public:
     energyOrbt();
     void shoot(float x, float y, int degree)	override;
-    void compute(wand *wd)				override;
 };
 
 //	链锯
@@ -95,7 +91,6 @@ class chain : public spell
 public:
     chain();
     void shoot(float x, float y, int degree)	override;
-    void compute(wand *wd)				override;
 };
 
 //	双重释放
@@ -104,7 +99,6 @@ class doubleSpell : public spell
 public:
     doubleSpell();
     void shoot(float x, float y, int degree)	override;
-    void compute(wand *wd)				override;
 };
 
 //	注入法力
@@ -113,7 +107,6 @@ class addMana : public spell
 public:
     addMana();
     void shoot(float x, float y, int degree)	override;
-    void compute(wand *wd)				override;
 };
 
 //	加速
@@ -122,7 +115,6 @@ class speedUp : public spell
 public:
     speedUp();
     void shoot(float x, float y, int degree)	override;
-    void compute(wand *wd)				override;
 };
 
 //	伤害增强
@@ -131,7 +123,6 @@ class damagePlus : public spell
 public:
     damagePlus();
     void shoot(float x, float y, int degree)	override;
-    void compute(wand *wd)				override;
 };
 
 #endif // SPELL_H
