@@ -11,7 +11,8 @@ public:
     people(b2BodyDef *bodyDef,b2FixtureDef *fixDef, b2World *world);
     void moveRight() override;
     void moveLeft() override;
-    wand getWand(int n);
+    wand* getWand(int n);
+    void addWand(wand *w, int n);
     float jump;
     float mana;
     bool onGround;
@@ -19,7 +20,7 @@ public:
     int wandInHand;
 
 private:
-    std::vector<wand>* wnd;
+    wand **wnd;
 
 };
 

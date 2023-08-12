@@ -3,7 +3,7 @@
 
 #include <QImage>
 #include <vector>
-#include <spell.h>
+#include "spell.h"
 
 typedef struct srd{
     spell* s;
@@ -13,8 +13,10 @@ typedef struct srd{
 class wand
 {
 public:
-    void shoot(float x, float y, int degree);
-    spell* extract();
+    void shoot(float x, float y, int degree, b2World *world);
+    spell* extract(mod m = {1, 1});
+    //图片
+    QImage img;
 
 protected:
     //基础施法延迟,帧为单位
@@ -43,8 +45,6 @@ protected:
     bool isBack;
     //法杖内所含法术
     spell **spl;
-    //图片
-    QImage img;
 
 };
 

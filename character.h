@@ -3,6 +3,7 @@
 
 #include <box2d/box2d.h>
 #include <string.h>
+#include <QImage>
 
 class character {
 
@@ -22,6 +23,8 @@ public:
     virtual void moveRight();
     float maxxSpeed;
     float maxySpeed;
+    QImage img;
+
 
 protected:
     b2Body *body;

@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QImage>
 #include <qnamespace.h>
+#include <cmath>
 
 gameWidget::gameWidget(QWidget *parent) :
     QWidget(parent),
@@ -14,7 +15,8 @@ gameWidget::gameWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     initializeWorld();
-    playerImg = (new QImage("../23su/source/image/player.jpg"))->mirrored(true, true);
+    wand* aaaa = new normalWand();
+    player->addWand(aaaa, 0);
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [this]() {
@@ -48,11 +50,25 @@ void gameWidget::paintEvent(QPaintEvent* event) {
 
     //绘制人物
     painter.drawImage(QRectF(QPointF(player->getPos().x * PPM - player->getSize().x * PPM, player->getPos().y * PPM - player->getSize().y * PPM),
-                             QPointF(player->getPos().x * PPM + player->getSize().x * PPM, player->getPos().y * PPM + player->getSize().y * PPM)), playerImg);
-    printf("%f, %f, %f, %f, %f\n", player->getSize().x, player->getSize().y, player->getPos().x, player->getPos().y, ground->GetPosition().y);
+                             QPointF(player->getPos().x * PPM + player->getSize().x * PPM, player->getPos().y * PPM + player->getSize().y * PPM)), player->img);
+
+    //绘制法杖
+    auto tw = player->getWand(player->wandInHand);
+    if (tw != nullptr) {
+        painter.save();
+        degree = std::atan2(height() - mousePos.y() - player->getPos().y * PPM, mousePos.x() - player->getPos().x * PPM) * (180.0 / M_PI) - 90;
+        painter.translate(player->getPos().x * PPM, player->getPos().y * PPM);
+        painter.rotate(degree);
+        painter.drawImage(QRectF(QPointF(-0.2 * PPM, 0), QPointF(0.2 * PPM, 1.2 * PPM)), tw->img);
+        painter.restore();
+    }
+    printf("%d, %d\n", mousePos.x(), height() - mousePos.y());
+    printf("%f, %f\n", player->getPos().x * PPM, player->getPos().y * PPM);
 
     //绘制jump框
     painter.fillRect(QRect(0, height() - 20, player->jump, 20), Qt::yellow);
+
+    //
 }
 
 void gameWidget::initializeWorld() {
@@ -85,7 +101,7 @@ void gameWidget::createPlayer() {
     b2FixtureDef playerFix;
     playerFix.shape = &playerShape;	//形状
     playerFix.friction = 0.5;		//摩擦系数
-    playerFix.restitution = 0; 	//弹性
+    playerFix.restitution = 0; 		//弹性
     playerFix.density = 30;			//密度
     playerFix.isSensor = false;
 
@@ -128,12 +144,12 @@ void gameWidget::playerMove() {
     if (isPressed['w' - 'a']) {
         if (player->jump > 0) {
             float yv = player->getSpeed().y;
-            player->addForce(b2Vec2(0, 600 + (player->maxySpeed - (yv > 0 ? yv : 0)) * 100));
+            player->addForce(b2Vec2(0, 600 + (player->maxySpeed - (yv > 0 ? yv : 0)) * 300));
             player->jump -= 0.5;
             player->onGround = false;
         }
     } else if (player->jump < 100){
-        if (player->onGround) player->jump += 1.5;
+        if (player->onGround) player->jump += 3;
         else player->jump += 0.1;
     }
 }
@@ -146,6 +162,15 @@ void gameWidget::keyPressEvent(QKeyEvent *event) {
 void gameWidget::keyReleaseEvent(QKeyEvent *event) {
     int key = event->key();
     if (key >= 0x41 && key <= 0x5a) isPressed[key - 0x41] = false;
+}
+
+void gameWidget::mousePressEvent(QMouseEvent *event) {
+    player->getWand(player->wandInHand)->shoot(player->getPos().x + 1.2 * cos(degree), player->getPos().y + 1.2 * sin(degree), degree, this->world);
+}
+
+void gameWidget::mouseMoveEvent(QMouseEvent *event) {
+    setMouseTracking(true);
+    mousePos = event->pos();
 }
 
 void playerContactListener::BeginContact(b2Contact *contact) {

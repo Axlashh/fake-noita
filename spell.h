@@ -1,13 +1,18 @@
+#pragma once
 #ifndef SPELL_H
 #define SPELL_H
 
 #include <QImage>
 #include <box2d/box2d.h>
 
-#define projectile 0
-#define multicast 1
-#define pmodifier 2
-#define pjtWithTrigger 3
+#define projectile 	0
+#define pmodifier 	1
+#define multicast 	2
+#define trigger		3
+
+typedef struct mod {
+    float sr, dr;
+}mod;
 
 class wand;
 
@@ -15,17 +20,27 @@ class spell
 {
 public:
     //法术发射
-    virtual void shoot(float x, float y, int degree) = 0;
+    //virtual ~spell();
+    void shoot(float x, float y, int degree);
     //计算本次法术释放的情况
-    virtual void compute(wand *wd);
+    virtual void compute(wand *wd, mod m = {1, 1});
+    virtual void shoot(float x, float y, int degree, b2World *world);
+    //提供一个深复制的对象
+    virtual spell* copy() = 0;
+
     int getMana();
+    int getCastDelay();
+    int getRechargeTime();
+
+    void creatBody(float x, float y, b2World *world);
+    void setV(int v, int degree);
 
 protected:
 //  法术类型
 //  0 projectile 为投射物
-//  1 multicast 为多重释放
-//  2 modifier 为投射修正
-//	3 为带触发的投射物
+//  1 modifier 为投射修正
+//  2 multicast 为多重释放
+//	3 trigger	为带触发的法术
     int type;
 //  额外抽取的法术个数
     int drawNum;
@@ -51,6 +66,14 @@ protected:
     spell **spl;
 //	图片
     QImage img;
+//	物体半径
+    float r;
+//	body
+    b2Body *body;
+//	物体基本信息
+    b2BodyDef *bodyDef;
+//	物体fixture
+    b2FixtureDef *fixDef;
 };
 
 //	火花弹
@@ -58,15 +81,15 @@ class sparkBolt : public spell
 {
 public:
     sparkBolt();
-    void shoot(float x, float y, int degree)	override;
+    sparkBolt* copy()	override;
 };
 
 //	带触发的火花弹
-class sparkBoltt : public spell
+class sparkBoltt : public sparkBolt
 {
 public:
     sparkBoltt();
-    void shoot(float x, float y, int degree)	override;
+    sparkBoltt* copy()	override;
 };
 
 //	能量球
@@ -74,15 +97,15 @@ class energyOrb : public spell
 {
 public:
     energyOrb();
-    void shoot(float x, float y, int degree)	override;
+    energyOrb* copy()	override;
 };
 
 //	带触发的能量球
-class energyOrbt : public spell
+class energyOrbt : public energyOrb
 {
 public:
     energyOrbt();
-    void shoot(float x, float y, int degree)	override;
+    energyOrbt* copy()	override;
 };
 
 //	链锯
@@ -90,7 +113,7 @@ class chain : public spell
 {
 public:
     chain();
-    void shoot(float x, float y, int degree)	override;
+    chain* copy()	override;
 };
 
 //	双重释放
@@ -98,7 +121,7 @@ class doubleSpell : public spell
 {
 public:
     doubleSpell();
-    void shoot(float x, float y, int degree)	override;
+    doubleSpell* copy()	override;
 };
 
 //	注入法力
@@ -106,7 +129,7 @@ class addMana : public spell
 {
 public:
     addMana();
-    void shoot(float x, float y, int degree)	override;
+    addMana* copy()	override;
 };
 
 //	加速
@@ -114,7 +137,7 @@ class speedUp : public spell
 {
 public:
     speedUp();
-    void shoot(float x, float y, int degree)	override;
+    speedUp* copy()	override;
 };
 
 //	伤害增强
@@ -122,7 +145,7 @@ class damagePlus : public spell
 {
 public:
     damagePlus();
-    void shoot(float x, float y, int degree)	override;
+    damagePlus* copy()	override;
 };
 
 #endif // SPELL_H

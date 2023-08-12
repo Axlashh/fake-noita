@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QtConcurrent>
+#include <QtEvents>
+#include <QPoint>
 #include "others.h"
 
 namespace Ui {
@@ -22,6 +24,8 @@ protected:
     void paintEvent(QPaintEvent* event) override;
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 private slots:
 
@@ -41,7 +45,9 @@ private:
 
     bool isPressed[26] = {};
 
-    QThread *keyThread;
+    QPoint mousePos;
+    //人物到鼠标的角度
+    int degree;
 };
 
 class playerContactListener : public b2ContactListener {
