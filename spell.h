@@ -8,7 +8,7 @@
 #define projectile 	0
 #define pmodifier 	1
 #define multicast 	2
-#define trigger		3
+#define withTrigger	3
 
 typedef struct mod {
     float sr, dr;
@@ -37,10 +37,10 @@ public:
 
 protected:
 //  法术类型
-//  0 projectile 为投射物
-//  1 modifier 为投射修正
-//  2 multicast 为多重释放
-//	3 trigger	为带触发的法术
+//  0 projectile 	为投射物
+//  1 modifier 		为投射修正
+//  2 multicast 	为多重释放
+//	3 withTrigger	为带触发的法术
     int type;
 //  额外抽取的法术个数
     int drawNum;

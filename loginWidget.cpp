@@ -16,7 +16,7 @@ loginWidget::loginWidget(QWidget *parent) :
 
     ui->setupUi(this);
     QSqlDatabase db=QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("mydata");
+    db.setDatabaseName("../23su/source/loginData");
     if(!db.open())
         qDebug()<<"can't open";
     else

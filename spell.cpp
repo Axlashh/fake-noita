@@ -4,7 +4,7 @@ void spell::compute(wand *wd, mod m) {
     switch (this->type) {
     //普通投射物
     case projectile:
-    case trigger:
+    case withTrigger:
         //计算投射物修正的数值
         this->speedRate *= m.sr;
         this->damageRate *= m.dr;
@@ -30,7 +30,7 @@ void spell::shoot(float x, float y, int degree, b2World *world) {
     this->creatBody(x, y, world);
 
     this->setV(this->speed, degree);
-    if (this->type != trigger) {
+    if (this->type != withTrigger) {
         for (int i = 0; i < this->drawNum; i++) {
             this->spl[i]->shoot(x, y, degree, world);
         }
@@ -105,7 +105,7 @@ sparkBolt* sparkBolt::copy() {
 
 //带触发的火花弹
 sparkBoltt::sparkBoltt() {
-    type = trigger;
+    type = withTrigger;
     drawNum = 1;
     spl = new spell*[drawNum];
 }
