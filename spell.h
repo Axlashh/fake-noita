@@ -21,13 +21,15 @@ class spell
 {
 public:
     //法术发射
-    //virtual ~spell();
+    virtual ~spell();
     //计算本次法术释放的情况
     virtual void compute(wand *wd, mod m = {1, 1});
     virtual void shoot(float x, float y, int degree, b2World *world);
     //提供一个深复制的对象
-    virtual spell* copy() = 0;
+    virtual spell* copy();
     virtual void draw(QPainter *painter, float PPM);
+    void update();
+    virtual void bomb();
 
     int getMana();
     int getCastDelay();
@@ -37,6 +39,7 @@ public:
     void setV(int v, int degree);
 
 protected:
+    void copyTo(spell* t);
 //  法术类型
 //  0 projectile 	为投射物
 //  1 modifier 		为投射修正
@@ -71,6 +74,7 @@ protected:
     float r;
 //	body
     b2Body *body;
+    b2BodyUserData *ud;
 //	物体基本信息
     b2BodyDef *bodyDef;
 //	物体fixture
@@ -91,6 +95,7 @@ class sparkBoltt : public sparkBolt
 {
 public:
     sparkBoltt();
+    ~sparkBoltt()	override;
     sparkBoltt* copy()	override;
 };
 

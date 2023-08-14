@@ -1,5 +1,12 @@
 #include "wand.h"
 #include "userData.h"
+#include <QDebug>
+
+spell::~spell() {
+    delete ud;
+    delete bodyDef;
+    delete fixDef;
+}
 
 void spell::compute(wand *wd, mod m) {
     switch (this->type) {
@@ -53,8 +60,10 @@ int spell::getRechargeTime() {
 }
 
 void spell::setV(int v, int degree) {
-    float xv = v * cos(degree + rand() % (2 * this->spread) - this->spread);
-    float yv = v * sin(degree + rand() % (2 * this->spread) - this->spread);
+    int fixedDegree = degree + rand() % (2 * this->spread) - this->spread;
+    float rad = fixedDegree * M_PI / 180.0f;
+    float xv = v * cos(rad);
+    float yv = v * sin(rad);
     b2Vec2 bv(xv, yv);
     this->body->SetLinearVelocity(bv);
 }
@@ -70,13 +79,31 @@ void spell::draw(QPainter *painter, float PPM) {
 
 }
 
+void spell::copyTo(spell* t) {
+    t->bodyDef = new b2BodyDef(*this->bodyDef);
+    t->ud = new b2BodyUserData();
+    userData *uud = new userData();
+    uud->p = (unsigned long long)t;
+    uud->type = userDataType::spell;
+    t->ud->pointer = (uintptr_t) uud;
+    t->bodyDef->userData = *t->ud;
+    t->fixDef = new b2FixtureDef(*this->fixDef);
+    t->spl = new spell*[this->drawNum];
+    for (int i = 0; i < drawNum; i++) t->spl[i] = this->spl[i];
+}
+
+void spell::update() {
+    if (lifetime-- < 0)
+        bomb();
+}
+
 //火花弹
 sparkBolt::sparkBolt() {
     type = projectile;
     drawNum = 0;
     manaCast = 5;
     damage = 3;
-    speed = 100;
+    speed = 50;
     spread = 5;
     lifetime = 1200;
     castDelay = 3;
@@ -84,19 +111,19 @@ sparkBolt::sparkBolt() {
     speedRate = 1;
     damageRate = 1;
     spl = nullptr;
-    r = 0.2;
+    r = 0.1;
     img = QImage("../23su/source/image/Spell_light_bullet.png");
 
     //初始化bodyDef
     bodyDef = new b2BodyDef();
-    b2BodyUserData ud;
+    ud = new b2BodyUserData();
     userData *uud = new userData();
     uud->p = (unsigned long long)this;
     uud->type = userDataType::spell;
-    ud.pointer = (uintptr_t) uud;
+    ud->pointer = (uintptr_t) uud;
     bodyDef->type = b2_dynamicBody;
     bodyDef->fixedRotation = false;
-    bodyDef->userData = ud;
+    bodyDef->userData = *ud;
 
     //初始化fixtureDef
     fixDef = new b2FixtureDef();
@@ -109,8 +136,7 @@ sparkBolt::sparkBolt() {
 
 sparkBolt* sparkBolt::copy() {
     sparkBolt* t = new sparkBolt(*this);
-    t->bodyDef = new b2BodyDef(*this->bodyDef);
-    t->fixDef = new b2FixtureDef(*this->fixDef);
+    this->copyTo(t);
     return t;
 }
 
@@ -118,9 +144,10 @@ void sparkBolt::draw(QPainter *painter, float PPM) {
     auto vv = body->GetLinearVelocity();
     int degree = std::atan2(vv.y, vv.x) * (180.0 / M_PI);
     painter->save();
-    painter->translate(body->GetPosition().x, body->GetPosition().y);
+    painter->translate(body->GetPosition().x * PPM, body->GetPosition().y * PPM);
     painter->rotate(degree);
-    painter->drawImage(QRectF(QPointF(10.5 / 13 * r * PPM, -2.5 / 13 * r * PPM), QPointF(2.5 / 13 * r * PPM, 2.5 / 13 * r * PPM)), img);
+    painter->drawImage(QRectF(QPointF(-10.5f / 2.5f * r * PPM, -r * PPM), QPointF(r * PPM, r * PPM)), img);
+    painter->restore();
 }
 
 //带触发的火花弹
@@ -128,6 +155,10 @@ sparkBoltt::sparkBoltt() {
     type = withTrigger;
     drawNum = 1;
     spl = new spell*[drawNum];
+}
+
+sparkBoltt::~sparkBoltt() {
+    delete[] spl;
 }
 
 sparkBoltt* sparkBoltt::copy() {
@@ -143,8 +174,7 @@ energyOrb::energyOrb() {
 
 energyOrb* energyOrb::copy() {
     energyOrb* t = new energyOrb(*this);
-    t->bodyDef = new b2BodyDef(*this->bodyDef);
-    t->fixDef = new b2FixtureDef(*this->fixDef);
+    this->copyTo(t);
     return t;
 }
 

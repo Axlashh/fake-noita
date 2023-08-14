@@ -13,6 +13,7 @@
 class wand
 {
 public:
+    virtual ~wand();
     void shoot(float x, float y, int degree, b2World *world);
     class::spell* extract(mod m = {1, 1});
     void update();

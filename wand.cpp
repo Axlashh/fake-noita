@@ -1,5 +1,13 @@
 #include "wand.h"
-#include "userData.h""
+#include "userData.h"
+
+wand::~wand() {
+    for (int i = 0; i < capacity; i++) {
+        if (spl[i] != nullptr)
+            delete spl[i];
+    }
+    delete[] spl;
+}
 
 normalWand::normalWand() {
     delay = 0;
@@ -48,6 +56,8 @@ void wand::shoot(float x, float y, int degree, b2World *world) {
     //发射！
     t->compute(this);
     t->shoot(x, y, degree, world);
+    delay += bdelay;
+    recharge += brecharge;
     //防止施法延迟与充能时间变为负数
     delay = delay > 0 ? delay : 0;
     recharge = recharge > 0 ? recharge : 0;
@@ -59,6 +69,7 @@ void wand::shoot(float x, float y, int degree, b2World *world) {
 }
 
 void wand::update() {
+    if (mana <= maxMana) mana += manaChargeSpeed;
     if (delay > 0) delay--;
     //如果处在充能状态
     if (isBack && recharge > 0) recharge--;

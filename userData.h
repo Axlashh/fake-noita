@@ -3,7 +3,7 @@
 
 enum userDataType {
     spell,
-    character,
+    monster,
     player
 };
 

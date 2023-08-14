@@ -50,7 +50,6 @@ void gameWidget::paintEvent(QPaintEvent* event) {
     painter.drawLine(0, ground->GetPosition().y * PPM, width(), ground->GetPosition().y * PPM);
 
     //绘制世界中的人物和法术
-    if (isPressed[26]) qDebug() << "mouse";
     for (auto it = world->GetBodyList(); it != nullptr; it = it->GetNext()) {
         struct::userData* ud = reinterpret_cast<struct::userData*>(it->GetUserData().pointer);
         switch (ud->type) {
@@ -58,8 +57,9 @@ void gameWidget::paintEvent(QPaintEvent* event) {
             reinterpret_cast<people*>(ud->p)->draw(&painter, PPM);
             break;
         case userDataType::spell:
+            class::spell *sp = reinterpret_cast<class::spell*>(ud->p);
+
             reinterpret_cast<class::spell*>(ud->p)->draw(&painter, PPM);
-            qDebug() << "aaa";
             break;
         default:
             break;
@@ -96,9 +96,6 @@ void gameWidget::initializeWorld() {
     world->SetContactListener(pcl);
 }
 
-void gameWidget::createPlayer() {
-}
-
 void gameWidget::createMap() {
     b2BodyDef gd;
     gd.position = b2Vec2(0, 0);
@@ -117,7 +114,8 @@ void gameWidget::createMap() {
 
 void gameWidget::myUpdate() {
     //获取此帧鼠标的角度
-    degree = std::atan2(height() - mousePos.y() - player->getPos().y * PPM, mousePos.x() - player->getPos().x * PPM) * (180.0 / M_PI);
+    radian = std::atan2(height() - mousePos.y() - player->getPos().y * PPM, mousePos.x() - player->getPos().x * PPM);
+    degree = radian * (180.0 / M_PI);
 
     //计算人物移动
     playerMove();
@@ -135,12 +133,10 @@ void gameWidget::wandUpdate() {
     }
 
     auto wd = player->getWand(player->wandInHand);
-    qDebug() << wd->readyToShoot();
     //如果鼠标左键被按下，发射！
     if (isPressed[26] && wd->readyToShoot()) {
-        qDebug() << cos(degree) << sin(degree) << player->getPos().x << player->getPos().y;
-        float cs = cos(degree), sn = sin(degree), xx = player->getPos().x, yy = player->getPos().y;
-        wd->shoot(xx + cs, yy + sn, degree, world);
+        float cs = cos(radian), sn = sin(radian), xx = player->getPos().x, yy = player->getPos().y;
+        wd->shoot(xx + 1.2 * cs, yy + 1.2 * sn, degree, world);
 //        wd->shoot(player->getPos().x + 1.2 * cos(degree), player->getPos().y + 1.2 * sin(degree), degree, world);
     }
 }

@@ -69,6 +69,7 @@ private:
     QPoint mousePos;
     //人物到鼠标的角度
     int degree;
+    float radian;
 };
 
 class playerContactListener : public b2ContactListener {
