@@ -5,16 +5,18 @@
 #include <vector>
 #include "spell.h"
 
-typedef struct srd{
-    spell* s;
-    int r, d;
-}srd;
+//typedef struct srd{
+//    spell* s;
+//    int r, d;
+//}srd;
 
 class wand
 {
 public:
     void shoot(float x, float y, int degree, b2World *world);
-    spell* extract(mod m = {1, 1});
+    class::spell* extract(mod m = {1, 1});
+    void update();
+    bool readyToShoot();
     //图片
     QImage img;
 
@@ -44,7 +46,7 @@ protected:
     //是否为回绕
     bool isBack;
     //法杖内所含法术
-    spell **spl;
+    class::spell **spl;
 
 };
 

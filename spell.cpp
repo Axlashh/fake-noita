@@ -1,4 +1,5 @@
 #include "wand.h"
+#include "userData.h"
 
 void spell::compute(wand *wd, mod m) {
     switch (this->type) {
@@ -6,8 +7,8 @@ void spell::compute(wand *wd, mod m) {
     case projectile:
     case withTrigger:
         //计算投射物修正的数值
-        this->speedRate *= m.sr;
-        this->damageRate *= m.dr;
+        this->speed *= m.sr;
+        this->damage *= m.dr;
         break;
 
     //投射物修正
@@ -27,9 +28,11 @@ void spell::compute(wand *wd, mod m) {
 }
 
 void spell::shoot(float x, float y, int degree, b2World *world) {
-    this->creatBody(x, y, world);
+    if (this->type != pmodifier && this->type != multicast) {
+        this->creatBody(x, y, world);
+        this->setV(this->speed, degree);
+    }
 
-    this->setV(this->speed, degree);
     if (this->type != withTrigger) {
         for (int i = 0; i < this->drawNum; i++) {
             this->spl[i]->shoot(x, y, degree, world);
@@ -62,6 +65,11 @@ void spell::creatBody(float x, float y, b2World *world) {
     body->CreateFixture(fixDef);
 }
 
+//默认的法术绘图函数，什么都不画
+void spell::draw(QPainter *painter, float PPM) {
+
+}
+
 //火花弹
 sparkBolt::sparkBolt() {
     type = projectile;
@@ -82,7 +90,10 @@ sparkBolt::sparkBolt() {
     //初始化bodyDef
     bodyDef = new b2BodyDef();
     b2BodyUserData ud;
-    ud.pointer = (uintptr_t) this;
+    userData *uud = new userData();
+    uud->p = (unsigned long long)this;
+    uud->type = userDataType::spell;
+    ud.pointer = (uintptr_t) uud;
     bodyDef->type = b2_dynamicBody;
     bodyDef->fixedRotation = false;
     bodyDef->userData = ud;
@@ -101,6 +112,15 @@ sparkBolt* sparkBolt::copy() {
     t->bodyDef = new b2BodyDef(*this->bodyDef);
     t->fixDef = new b2FixtureDef(*this->fixDef);
     return t;
+}
+
+void sparkBolt::draw(QPainter *painter, float PPM) {
+    auto vv = body->GetLinearVelocity();
+    int degree = std::atan2(vv.y, vv.x) * (180.0 / M_PI) - 90;
+    painter->save();
+    painter->translate(body->GetPosition().x, body->GetPosition().y);
+    painter->rotate(degree);
+    //painter->drawImage(QRectF(QPointF());
 }
 
 //带触发的火花弹
@@ -128,6 +148,10 @@ energyOrb* energyOrb::copy() {
     return t;
 }
 
+void energyOrb::draw(QPainter *painter, float PPM) {
+
+}
+
 energyOrbt::energyOrbt() {
 }
 
@@ -147,6 +171,10 @@ chain* chain::copy() {
     t->bodyDef = new b2BodyDef(*this->bodyDef);
     t->fixDef = new b2FixtureDef(*this->fixDef);
     return t;
+}
+
+void chain::draw(QPainter *painter, float PPM) {
+
 }
 
 doubleSpell::doubleSpell() {

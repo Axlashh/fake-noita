@@ -18,20 +18,20 @@ SOURCES += \
     gameWidget.cpp \
     loginWidget.cpp \
     main.cpp \
-    others.cpp \
     people.cpp \
     registerwidget.cpp \
     spell.cpp \
+    userData.cpp \
     wand.cpp
 
 HEADERS += \
     character.h \
     gameWidget.h \
     loginWidget.h \
-    others.h \
     people.h \
     registerwidget.h \
     spell.h \
+    userData.h \
     wand.h
 
 FORMS += \

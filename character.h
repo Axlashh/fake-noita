@@ -2,14 +2,17 @@
 #define CHARACTER_H
 
 #include <box2d/box2d.h>
+#include <QPainter>
 #include <string.h>
 #include <QImage>
+#include "userData.h"
 
 class character {
 
 public:
     character();
-    character(b2BodyDef *bodyDef,b2FixtureDef *fixDef, b2World *world);
+    virtual ~character() = 0;
+    character(b2World *world, b2Vec2 pos);
     void setBodyDef(b2BodyDef *bodyDef, b2World *world);
     void setFixtrue(b2FixtureDef *fixDef);
     void setBlood();
@@ -21,6 +24,7 @@ public:
     void setSpeed(float x, float y);
     virtual void moveLeft();
     virtual void moveRight();
+    virtual void draw(QPainter *painter, float PPM) = 0;
     float maxxSpeed;
     float maxySpeed;
     QImage img;
@@ -28,6 +32,9 @@ public:
 
 protected:
     b2Body *body;
+    b2BodyDef *bodyDef;
+    b2FixtureDef *fixDef;
+    userData *ud;
     float sizex;
     float sizey;
     int blood;

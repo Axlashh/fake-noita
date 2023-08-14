@@ -1,4 +1,5 @@
 #include "wand.h"
+#include "userData.h""
 
 normalWand::normalWand() {
     bdelay = 12;
@@ -9,19 +10,19 @@ normalWand::normalWand() {
     capacity = 5;
     spread = 10;
     pos = 0;
-    spl = new spell*[capacity];
+    spl = new class::spell*[capacity];
     isBack = false;
     for (int i = 0; i < capacity; i++) spl[i] = nullptr;
     img = QImage("../23su/source/image/wand_1.png").mirrored(false, true);
 }
 
-spell* wand::extract(mod m) {
+class::spell* wand::extract(mod m) {
     //回绕完毕
     if (isBack && pos == startPos)
         return nullptr;
     //寻找法力值支持释放的法术
     while (pos < capacity && (spl[pos] == nullptr || spl[pos]->getMana() > mana)) pos++;
-    //进行回绕
+    //进行回绕或者是抽取完毕
     if (pos == capacity) {
         isBack = true;
         pos = 0;
@@ -32,16 +33,18 @@ spell* wand::extract(mod m) {
     this->delay += spl[pos]->getCastDelay();
     this->recharge += spl[pos]->getRechargeTime();
     //抽取到的法术进行进一步计算
-    spell *rt = spl[pos]->copy();
+    class::spell *rt = spl[pos]->copy();
+    pos++;
     rt->compute(this, m);
     return rt;
 }
 
 void wand::shoot(float x, float y, int degree, b2World *world) {
     startPos = pos;
-    spell* t = extract();
+    class::spell* t = extract();
     if (t == nullptr) return;
     //发射！
+    t->compute(this);
     t->shoot(x, y, degree, world);
     //防止施法延迟与充能时间变为负数
     delay = delay > 0 ? delay : 0;
@@ -51,4 +54,18 @@ void wand::shoot(float x, float y, int degree, b2World *world) {
         isBack = true;
         pos = 0;
     }
+}
+
+void wand::update() {
+    if (delay > 0) delay--;
+    //如果处在充能状态
+    if (isBack && recharge > 0) recharge--;
+
+    //充能完毕
+    if (recharge == 0) isBack = false;
+}
+
+bool wand::readyToShoot() {
+    //施法延迟为0 且不处在充能状态
+    return (delay == 0 && !isBack);
 }

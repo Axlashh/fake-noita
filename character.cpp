@@ -5,10 +5,10 @@ character::character() {
     blood = 100;
 }
 
-character::character(b2BodyDef *bodyDef,b2FixtureDef *fixDef, b2World *world) : character() {
-    setBodyDef(bodyDef, world);
-    setFixtrue(fixDef);
+character::character(b2World *world, b2Vec2 pos) : character() {
 }
+
+character::~character() {}
 
 void character::setBodyDef(b2BodyDef *bodyDef, b2World *world) {
     body = world->CreateBody(bodyDef);

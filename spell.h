@@ -3,6 +3,7 @@
 #define SPELL_H
 
 #include <QImage>
+#include <QPainter>
 #include <box2d/box2d.h>
 
 #define projectile 	0
@@ -21,12 +22,12 @@ class spell
 public:
     //法术发射
     //virtual ~spell();
-    void shoot(float x, float y, int degree);
     //计算本次法术释放的情况
     virtual void compute(wand *wd, mod m = {1, 1});
     virtual void shoot(float x, float y, int degree, b2World *world);
     //提供一个深复制的对象
     virtual spell* copy() = 0;
+    virtual void draw(QPainter *painter, float PPM);
 
     int getMana();
     int getCastDelay();
@@ -81,6 +82,7 @@ class sparkBolt : public spell
 {
 public:
     sparkBolt();
+    void draw(QPainter *painter, float PPM)	override;
     sparkBolt* copy()	override;
 };
 
@@ -97,6 +99,7 @@ class energyOrb : public spell
 {
 public:
     energyOrb();
+    void draw(QPainter *painter, float PPM)	override;
     energyOrb* copy()	override;
 };
 
@@ -113,6 +116,7 @@ class chain : public spell
 {
 public:
     chain();
+    void draw(QPainter *painter, float PPM)	override;
     chain* copy()	override;
 };
 

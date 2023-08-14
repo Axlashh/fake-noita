@@ -5,7 +5,24 @@
 #include <QtConcurrent>
 #include <QtEvents>
 #include <QPoint>
-#include "others.h"
+#include <QImage>
+#include <QLabel>
+#include <QThread>
+#include <QDebug>
+#include <QTimer>
+#include <QPainter>
+#include <QMainWindow>
+#include <QMatrix>
+#include <QTransform>
+#include <QDir>
+#include <QKeyEvent>
+
+#include <character.h>
+#include <people.h>
+
+#include <math.h>
+#include <box2d/box2d.h>
+#include "userData.h"
 
 namespace Ui {
 class gameWidget;
@@ -25,6 +42,7 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event)	override;
     void mousePressEvent(QMouseEvent *event) override;
 
 private slots:
@@ -35,6 +53,8 @@ private:
     void createPlayer();
     void createMap();
     void playerMove();
+    void wandUpdate();
+    void myUpdate();
     const float PPM = 50; //pixels per meter
     QTransform *transformer;
     QImage playerImg;
@@ -43,7 +63,8 @@ private:
     people *player;
     b2Body *ground;
 
-    bool isPressed[26] = {};
+    //前26个代表字母，第27个代表鼠标
+    bool isPressed[27] = {};
 
     QPoint mousePos;
     //人物到鼠标的角度

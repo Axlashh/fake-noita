@@ -20,9 +20,8 @@ gameWidget::gameWidget(QWidget *parent) :
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [this]() {
-        world->Step(1.0f / 60.0f, 6, 2);
+        myUpdate();
         update();
-        playerMove();
     });
     timer->start(1000 / 60); // 设置更新频率为 60 Hz
 
@@ -48,18 +47,26 @@ void gameWidget::paintEvent(QPaintEvent* event) {
     painter.setPen(Qt::black);
     painter.drawLine(0, ground->GetPosition().y * PPM, width(), ground->GetPosition().y * PPM);
 
-    //绘制人物
-    painter.drawImage(QRectF(QPointF(player->getPos().x * PPM - player->getSize().x * PPM, player->getPos().y * PPM - player->getSize().y * PPM),
-                             QPointF(player->getPos().x * PPM + player->getSize().x * PPM, player->getPos().y * PPM + player->getSize().y * PPM)), player->img);
+    //绘制世界中的人物和法术
+    for (auto it = world->GetBodyList(); it != nullptr; it = it->GetNext()) {
+        struct::userData* ud = reinterpret_cast<struct::userData*>(it->GetUserData().pointer);
+        switch (ud->type) {
+        case userDataType::player:
+            reinterpret_cast<people*>(ud->p)->draw(&painter, PPM);
+            break;
+        default:
+            break;
+        }
+    }
 
     //绘制法杖
     auto tw = player->getWand(player->wandInHand);
     if (tw != nullptr) {
         painter.save();
-        degree = std::atan2(height() - mousePos.y() - player->getPos().y * PPM, mousePos.x() - player->getPos().x * PPM) * (180.0 / M_PI) - 90;
         painter.translate(player->getPos().x * PPM, player->getPos().y * PPM);
         painter.rotate(degree);
-        painter.drawImage(QRectF(QPointF(-0.2 * PPM, 0), QPointF(0.2 * PPM, 1.2 * PPM)), tw->img);
+        qDebug()<<degree;
+        painter.drawImage(QRectF(QPointF(0, -0.2 * PPM), QPointF(1.2 * PPM, 0.2 * PPM)), tw->img);
         painter.restore();
     }
     printf("%d, %d\n", mousePos.x(), height() - mousePos.y());
@@ -74,7 +81,11 @@ void gameWidget::paintEvent(QPaintEvent* event) {
 void gameWidget::initializeWorld() {
     b2Vec2 gravity(0, -9.8f);
     world = new b2World(gravity);
-    createPlayer();
+
+    //创建玩家
+    b2Vec2 pos(10.0f, 20.0f);
+    player = new people(world, pos);
+
     createMap();
     playerContactListener *pcl = new playerContactListener();
     pcl->player = player;
@@ -82,31 +93,6 @@ void gameWidget::initializeWorld() {
 }
 
 void gameWidget::createPlayer() {
-    //创建人物的基本属性
-    b2BodyDef playerDef;
-    b2Vec2 pos(10.0f, 20.0f);
-    b2BodyUserData t;
-    t.pointer = (uintptr_t)"player";
-    playerDef.allowSleep = false;
-    playerDef.type = b2_dynamicBody;
-    playerDef.position = pos;
-    playerDef.fixedRotation = true;
-    playerDef.userData = t;
-
-    //创建人物的形状
-    b2PolygonShape playerShape;
-    playerShape.SetAsBox(0.5f, 1.0f);
-
-    //定义人物特征
-    b2FixtureDef playerFix;
-    playerFix.shape = &playerShape;	//形状
-    playerFix.friction = 0.5;		//摩擦系数
-    playerFix.restitution = 0; 		//弹性
-    playerFix.density = 30;			//密度
-    playerFix.isSensor = false;
-
-
-    player = new people(&playerDef, &playerFix, world);
 }
 
 void gameWidget::createMap() {
@@ -123,6 +109,32 @@ void gameWidget::createMap() {
     gdS.SetTwoSided(b2Vec2(0, 0), b2Vec2(800, 0));
 
     ground->CreateFixture(&gdS, 0);
+}
+
+void gameWidget::myUpdate() {
+    //获取此帧鼠标的角度
+    degree = std::atan2(height() - mousePos.y() - player->getPos().y * PPM, mousePos.x() - player->getPos().x * PPM) * (180.0 / M_PI);
+
+    //计算人物移动
+    playerMove();
+
+    wandUpdate();
+    world->Step(1.0f / 60.0f, 6, 2);
+}
+
+void gameWidget::wandUpdate() {
+    //对玩家的每根法杖进行更新
+    for (int i = 0; i < player->maxWand; i++) {
+        if (player->getWand(i) != nullptr) {
+            player->getWand(i)->update();
+        }
+    }
+
+    auto wd = player->getWand(player->wandInHand);
+    //如果鼠标左键被按下，发射！
+    if (isPressed[26] && wd->readyToShoot()) {
+        wd->shoot(player->getPos().x + 1.2 * cos(degree), player->getPos().y + 1.2 * sin(degree), degree, world);
+    }
 }
 
 void gameWidget::playerMove() {
@@ -165,7 +177,11 @@ void gameWidget::keyReleaseEvent(QKeyEvent *event) {
 }
 
 void gameWidget::mousePressEvent(QMouseEvent *event) {
-    player->getWand(player->wandInHand)->shoot(player->getPos().x + 1.2 * cos(degree), player->getPos().y + 1.2 * sin(degree), degree, this->world);
+    isPressed[26] = true;
+}
+
+void gameWidget::mouseReleaseEvent(QMouseEvent *event) {
+    isPressed[26] = false;
 }
 
 void gameWidget::mouseMoveEvent(QMouseEvent *event) {
@@ -178,9 +194,11 @@ void playerContactListener::BeginContact(b2Contact *contact) {
     b2Fixture *fixtureB = contact->GetFixtureB();
     b2Body *bodyA = fixtureA->GetBody();
     b2Body *bodyB = fixtureB->GetBody();
+    userData* udA = reinterpret_cast<userData*>(bodyA->GetUserData().pointer);
+    userData* udB = reinterpret_cast<userData*>(bodyB->GetUserData().pointer);
 
-    if (((const char *)bodyA->GetUserData().pointer == std::string("player") && bodyA->GetPosition().y > bodyB->GetPosition().y) ||
-        ((const char *)bodyB->GetUserData().pointer == std::string("player") && bodyB->GetPosition().y > bodyA->GetPosition().y)) {
+    if ((udA->type == userDataType::player && bodyA->GetPosition().y > bodyB->GetPosition().y) ||
+        (udB->type == userDataType::player && bodyB->GetPosition().y > bodyA->GetPosition().y)) {
         player->onGround = true;
     }
 }

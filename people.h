@@ -3,16 +3,19 @@
 
 #include "character.h"
 #include "wand.h"
+#include "userData.h"
 
 class people : public character
 {
 public:
     people();
-    people(b2BodyDef *bodyDef,b2FixtureDef *fixDef, b2World *world);
+    ~people()	override;
+    people(b2World *world, b2Vec2 pos);
     void moveRight() override;
     void moveLeft() override;
     wand* getWand(int n);
     void addWand(wand *w, int n);
+    void draw(QPainter *painter, float PPM)	override;
     float jump;
     float mana;
     bool onGround;
