@@ -16,6 +16,8 @@ gameWidget::gameWidget(QWidget *parent) :
     ui->setupUi(this);
     initializeWorld();
     wand* aaaa = new normalWand();
+    class::spell *bbb = new sparkBolt();
+    aaaa->addSpell(bbb, 0);
     player->addWand(aaaa, 0);
 
     timer = new QTimer(this);
@@ -48,11 +50,16 @@ void gameWidget::paintEvent(QPaintEvent* event) {
     painter.drawLine(0, ground->GetPosition().y * PPM, width(), ground->GetPosition().y * PPM);
 
     //绘制世界中的人物和法术
+    if (isPressed[26]) qDebug() << "mouse";
     for (auto it = world->GetBodyList(); it != nullptr; it = it->GetNext()) {
         struct::userData* ud = reinterpret_cast<struct::userData*>(it->GetUserData().pointer);
         switch (ud->type) {
         case userDataType::player:
             reinterpret_cast<people*>(ud->p)->draw(&painter, PPM);
+            break;
+        case userDataType::spell:
+            reinterpret_cast<class::spell*>(ud->p)->draw(&painter, PPM);
+            qDebug() << "aaa";
             break;
         default:
             break;
@@ -65,12 +72,9 @@ void gameWidget::paintEvent(QPaintEvent* event) {
         painter.save();
         painter.translate(player->getPos().x * PPM, player->getPos().y * PPM);
         painter.rotate(degree);
-        qDebug()<<degree;
         painter.drawImage(QRectF(QPointF(0, -0.2 * PPM), QPointF(1.2 * PPM, 0.2 * PPM)), tw->img);
         painter.restore();
     }
-    printf("%d, %d\n", mousePos.x(), height() - mousePos.y());
-    printf("%f, %f\n", player->getPos().x * PPM, player->getPos().y * PPM);
 
     //绘制jump框
     painter.fillRect(QRect(0, height() - 20, player->jump, 20), Qt::yellow);
@@ -131,9 +135,13 @@ void gameWidget::wandUpdate() {
     }
 
     auto wd = player->getWand(player->wandInHand);
+    qDebug() << wd->readyToShoot();
     //如果鼠标左键被按下，发射！
     if (isPressed[26] && wd->readyToShoot()) {
-        wd->shoot(player->getPos().x + 1.2 * cos(degree), player->getPos().y + 1.2 * sin(degree), degree, world);
+        qDebug() << cos(degree) << sin(degree) << player->getPos().x << player->getPos().y;
+        float cs = cos(degree), sn = sin(degree), xx = player->getPos().x, yy = player->getPos().y;
+        wd->shoot(xx + cs, yy + sn, degree, world);
+//        wd->shoot(player->getPos().x + 1.2 * cos(degree), player->getPos().y + 1.2 * sin(degree), degree, world);
     }
 }
 

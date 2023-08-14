@@ -2,6 +2,8 @@
 #include "userData.h""
 
 normalWand::normalWand() {
+    delay = 0;
+    recharge = 0;
     bdelay = 12;
     brecharge = 24;
     maxMana = 120;
@@ -68,4 +70,8 @@ void wand::update() {
 bool wand::readyToShoot() {
     //施法延迟为0 且不处在充能状态
     return (delay == 0 && !isBack);
+}
+
+void wand::addSpell(class::spell* spl, int n) {
+    this->spl[n] = spl;
 }

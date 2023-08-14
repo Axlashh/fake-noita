@@ -17,6 +17,7 @@ public:
     class::spell* extract(mod m = {1, 1});
     void update();
     bool readyToShoot();
+    void addSpell(class::spell* spl, int n);
     //图片
     QImage img;
 

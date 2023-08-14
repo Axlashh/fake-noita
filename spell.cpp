@@ -100,9 +100,9 @@ sparkBolt::sparkBolt() {
 
     //初始化fixtureDef
     fixDef = new b2FixtureDef();
-    b2CircleShape cs;
-    cs.m_radius = r;
-    fixDef->shape = &cs;
+    b2CircleShape *cs = new b2CircleShape();
+    cs->m_radius = r;
+    fixDef->shape = cs;
     fixDef->density = 0.5f;
     fixDef->friction = 0;
 }
@@ -116,11 +116,11 @@ sparkBolt* sparkBolt::copy() {
 
 void sparkBolt::draw(QPainter *painter, float PPM) {
     auto vv = body->GetLinearVelocity();
-    int degree = std::atan2(vv.y, vv.x) * (180.0 / M_PI) - 90;
+    int degree = std::atan2(vv.y, vv.x) * (180.0 / M_PI);
     painter->save();
     painter->translate(body->GetPosition().x, body->GetPosition().y);
     painter->rotate(degree);
-    //painter->drawImage(QRectF(QPointF());
+    painter->drawImage(QRectF(QPointF(10.5 / 13 * r * PPM, -2.5 / 13 * r * PPM), QPointF(2.5 / 13 * r * PPM, 2.5 / 13 * r * PPM)), img);
 }
 
 //带触发的火花弹
