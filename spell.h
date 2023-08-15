@@ -29,7 +29,7 @@ public:
     virtual spell* copy();
     virtual void draw(QPainter *painter, float PPM);
     void update();
-    virtual void bomb();
+//    virtual void bomb();
 
     int getMana();
     int getCastDelay();

@@ -38,6 +38,8 @@ people::people()
         wnd[i] = nullptr;
     }
     img = QImage("../23su/source/image/player.jpg").mirrored(false, true);
+    backpackNum = 10;
+    backpack = new class::spell*[backpackNum];
 }
 
 people::people(b2World *world, b2Vec2 pos) : people()
@@ -52,6 +54,7 @@ people::~people() {
     delete bodyDef;
     delete fixDef;
     delete wnd;
+    delete[] backpack;
 }
 
 void people::moveRight() {

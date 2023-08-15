@@ -21,9 +21,11 @@ public:
     bool onGround;
     int maxWand;
     int wandInHand;
+    int backpackNum;
 
 private:
     wand **wnd;
+    class::spell **backpack;
 
 };
 

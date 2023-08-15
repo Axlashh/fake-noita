@@ -8,12 +8,16 @@
 #include <QImage>
 #include <qnamespace.h>
 #include <cmath>
+#include "pausewidget.h"
 
 gameWidget::gameWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::gameWidget)
 {
     ui->setupUi(this);
+    isPaused = false;
+    this->menu = new pauseWidget(this);
+    menu->hide();
     initializeWorld();
     wand* aaaa = new normalWand();
     class::spell *bbb = new sparkBolt();
@@ -22,8 +26,10 @@ gameWidget::gameWidget(QWidget *parent) :
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [this]() {
+        if (!isPaused) {
         myUpdate();
         update();
+        }
     });
     timer->start(1000 / 60); // 设置更新频率为 60 Hz
 
@@ -57,10 +63,9 @@ void gameWidget::paintEvent(QPaintEvent* event) {
             reinterpret_cast<people*>(ud->p)->draw(&painter, PPM);
             break;
         case userDataType::spell:
-            class::spell *sp = reinterpret_cast<class::spell*>(ud->p);
-
             reinterpret_cast<class::spell*>(ud->p)->draw(&painter, PPM);
             break;
+
         default:
             break;
         }
@@ -173,6 +178,15 @@ void gameWidget::playerMove() {
 void gameWidget::keyPressEvent(QKeyEvent *event) {
     int key = event->key();
     if (key >= 0x41 && key <= 0x5a) isPressed[key - 0x41] = true;
+    if (key == Qt::Key_Escape) {
+        if (isPaused) {
+            menu->hide();
+            isPaused = false;
+        } else {
+            menu->show();
+            isPaused = true;
+        }
+    }
 }
 
 void gameWidget::keyReleaseEvent(QKeyEvent *event) {

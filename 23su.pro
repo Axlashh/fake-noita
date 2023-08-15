@@ -18,8 +18,9 @@ SOURCES += \
     gameWidget.cpp \
     loginWidget.cpp \
     main.cpp \
+    pauseWidget.cpp \
     people.cpp \
-    registerwidget.cpp \
+    registerWidget.cpp \
     spell.cpp \
     userData.cpp \
     wand.cpp
@@ -28,8 +29,9 @@ HEADERS += \
     character.h \
     gameWidget.h \
     loginWidget.h \
+    pauseWidget.h \
     people.h \
-    registerwidget.h \
+    registerWidget.h \
     spell.h \
     userData.h \
     wand.h
@@ -37,7 +39,8 @@ HEADERS += \
 FORMS += \
     gameWidget.ui \
     loginWidget.ui \
-    registerwidget.ui
+    pauseWidget.ui \
+    registerWidget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

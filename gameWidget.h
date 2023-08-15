@@ -62,6 +62,8 @@ private:
     b2World *world;
     people *player;
     b2Body *ground;
+    bool isPaused;
+    QWidget *menu;
 
     //前26个代表字母，第27个代表鼠标
     bool isPressed[27] = {};

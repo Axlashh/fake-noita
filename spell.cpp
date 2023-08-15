@@ -79,6 +79,8 @@ void spell::draw(QPainter *painter, float PPM) {
 
 }
 
+class::spell* spell::copy() {return nullptr;}
+
 void spell::copyTo(spell* t) {
     t->bodyDef = new b2BodyDef(*this->bodyDef);
     t->ud = new b2BodyUserData();
@@ -92,10 +94,10 @@ void spell::copyTo(spell* t) {
     for (int i = 0; i < drawNum; i++) t->spl[i] = this->spl[i];
 }
 
-void spell::update() {
-    if (lifetime-- < 0)
-        bomb();
-}
+//void spell::update() {
+//    if (lifetime-- < 0)
+//        bomb();
+//}
 
 //火花弹
 sparkBolt::sparkBolt() {
