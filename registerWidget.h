@@ -14,6 +14,11 @@ class registerWidget : public QWidget
 public:
     explicit registerWidget(QWidget *parent = nullptr);
     ~registerWidget();
+signals:
+    void mysignal();
+
+private slots:
+    void on_registerButton_clicked();
 
 private:
     Ui::registerWidget *ui;

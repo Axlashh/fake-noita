@@ -4,7 +4,7 @@
 #include <QWidget>
 #include "gameWidget.h"
 #include "ui_gameWidget.h"
-
+#include"registerwidget.h"
 namespace Ui {
 class loginWidget;
 }
@@ -28,6 +28,7 @@ private slots:
 private:
     Ui::loginWidget *ui;
     gameWidget w;
+    registerWidget ww;
 };
 
 #endif // LOGINWIDGET_H

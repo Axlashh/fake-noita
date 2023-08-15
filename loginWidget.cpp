@@ -16,7 +16,7 @@ loginWidget::loginWidget(QWidget *parent) :
 
     ui->setupUi(this);
     QSqlDatabase db=QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("../23su/source/loginData");
+    db.setDatabaseName("mydata");
     if(!db.open())
         qDebug()<<"can't open";
     else
@@ -28,6 +28,10 @@ loginWidget::loginWidget(QWidget *parent) :
         qDebug()<<"ok";
     else
         qDebug()<<"no";
+    connect(&ww,&registerWidget::mysignal,this,[=]()
+            {
+               this->show();
+             });
 }
 
 loginWidget::~loginWidget()
@@ -36,21 +40,8 @@ loginWidget::~loginWidget()
 }
 void loginWidget::on_registerButton_clicked()
 {
-    QString account=ui->accountEdit->text();
-    QString password=ui->passwordEdit->text();
-    QString sql=QString("insert into user(accountname,passwordname) values('%1','%2');")
-                      .arg(account).arg(password);
-    QSqlQuery query;
-    if(query.exec(sql))
-    {
-        qDebug()<<"right";
-        QMessageBox::information(this,"注册","注册成功");
-    }
-    else
-    {
-        qDebug()<<"error";
-        QMessageBox::information(this,"注册","注册失败");
-    }
+    this->hide();
+    ww.show();
 }
 
 
