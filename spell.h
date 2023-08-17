@@ -29,6 +29,7 @@ public:
     virtual spell* copy();
     virtual void draw(QPainter *painter, float PPM);
     void update();
+    QImage* getimg();
 //    virtual void bomb();
 
     int getMana();

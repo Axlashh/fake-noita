@@ -16,6 +16,8 @@ public:
     wand* getWand(int n);
     void addWand(wand *w, int n);
     void draw(QPainter *painter, float PPM)	override;
+    class::spell* getPak(int n);
+    void swap(int wand1, int wand2, int spell1, int spell2);
     float jump;
     float mana;
     bool onGround;

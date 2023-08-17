@@ -40,6 +40,8 @@ people::people()
     img = QImage("../23su/source/image/player.jpg").mirrored(false, true);
     backpackNum = 10;
     backpack = new class::spell*[backpackNum];
+    for (int i = 0; i < backpackNum; i++)
+        backpack[i] = nullptr;
 }
 
 people::people(b2World *world, b2Vec2 pos) : people()
@@ -78,4 +80,38 @@ wand* people::getWand(int n) {
 void people::draw(QPainter *painter, float PPM) {
     painter->drawImage(QRectF(QPointF(body->GetPosition().x * PPM - this->getSize().x * PPM, body->GetPosition().y * PPM - this->getSize().y * PPM),
                              QPointF(body->GetPosition().x * PPM + this->getSize().x * PPM, body->GetPosition().y * PPM + this->getSize().y * PPM)), this->img);
+}
+
+class::spell* people::getPak(int n) {
+    return backpack[n];
+}
+
+void people::swap(int wand1, int wand2, int spell1, int spell2) {
+    //背包间交换
+    if (wand1 == -1 && wand2 == -1) {
+        auto tmp = backpack[spell1];
+        backpack[spell1] = backpack[spell2];
+        backpack[spell2] = tmp;
+    }
+    //与背包交换
+    else if (wand1 == -1 || wand2 == -1) {
+        if (wand1 == -1) {
+            std::swap(wand1, wand2);
+            std::swap(spell1, spell2);
+        }
+        auto tmp = wnd[wand1]->getSpell(spell1);
+        wnd[wand1]->addSpell(backpack[spell2], spell1);
+        backpack[spell2] = tmp;
+    }
+    //法杖间交换
+    else if (spell1 == -1 || spell2 == -1) {
+        auto tmp = wnd[wand1];
+        wnd[wand1] = wnd[wand2];
+        wnd[wand2] = tmp;
+    }
+    else {
+        auto tmp = wnd[wand1]->getSpell(spell1);
+        wnd[wand1]->addSpell(wnd[wand2]->getSpell(spell2), spell1);
+        wnd[wand2]->addSpell(tmp, spell2);
+    }
 }

@@ -20,6 +20,7 @@ gameWidget::gameWidget(QWidget *parent) :
     wand* aaaa = new normalWand();
     class::spell *bbb = new sparkBolt();
     aaaa->addSpell(bbb, 0);
+    aaaa->addSpell(bbb->copy(), 1);
     player->addWand(aaaa, 0);
     this->menu = new pauseWidget(this, player);
     menu->hide();

@@ -19,6 +19,8 @@ public:
     void update();
     bool readyToShoot();
     void addSpell(class::spell* spl, int n);
+    class::spell *getSpell(int n);
+    int getSpellNum();
     //图片
     QImage img;
 

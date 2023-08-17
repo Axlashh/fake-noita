@@ -9,6 +9,14 @@ wand::~wand() {
     delete[] spl;
 }
 
+class::spell* wand::getSpell(int n) {
+    return spl[n];
+}
+
+int wand::getSpellNum() {
+    return this->capacity;
+}
+
 normalWand::normalWand() {
     delay = 0;
     recharge = 0;

@@ -74,6 +74,10 @@ void spell::creatBody(float x, float y, b2World *world) {
     body->CreateFixture(fixDef);
 }
 
+QImage* spell::getimg() {
+    return &img;
+}
+
 //默认的法术绘图函数，什么都不画
 void spell::draw(QPainter *painter, float PPM) {
 

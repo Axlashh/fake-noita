@@ -4,26 +4,47 @@
 #include <QWidget>
 #include <QDropEvent>
 #include <QDrag>
+#include <QMimeData>
 #include <QLabel>
 #include <people.h>
 
 enum slotType {
     spl,
-    wad
+    wad,
+    pak
 };
 
 namespace Ui {
 class pauseWidget;
 };
 
+class dragableIcon : public QWidget {
+    Q_OBJECT
+
+public:
+    explicit dragableIcon(QWidget *parent = nullptr, slotType t = spl, int wandNum = 0, int spellNum = 0, QImage *img = nullptr);
+    ~dragableIcon();
+    void mousePressEvent(QMouseEvent *event)	override;
+    void paintEvent(QPaintEvent *event)			override;
+
+private:
+    slotType ty;
+    int wandNum;
+    int spellNum;
+    QImage *img;
+};
+
+
 class backpackSlot : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit backpackSlot(QWidget *parent = nullptr, slotType t = spl, people *p = nullptr);
+    explicit backpackSlot(QWidget *parent = nullptr, slotType t = spl, people *p = nullptr, int wandNum = 0, int spellNum = 0);
     ~backpackSlot();
     void setPos(int x, int y);
+    void setIcon(dragableIcon *d);
+    bool hasIcon();
 
 private:
     int type;
@@ -31,7 +52,10 @@ private:
     int heiSpl = 50;
     int widWad = 150;
     int heiWad = 100;
+    int wandNum;
+    int spellNum;
     people *player;
+    dragableIcon *di;
     void dragEnterEvent(QDragEnterEvent *event)	override;
     void dragLeaveEvent(QDragLeaveEvent *event)	override;
     void dragMoveEvent(QDragMoveEvent *event)	override;
@@ -48,6 +72,7 @@ public:
     explicit pauseWidget(QWidget *parent = nullptr, people *p = nullptr);
     ~pauseWidget();
     void setPlayer(people *p);
+    void myupdate();
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -55,10 +80,8 @@ protected:
 
 private:
     Ui::pauseWidget *ui;
-    backpackSlot *wand1;
-    backpackSlot *wand2;
-    backpackSlot **wandSpells1;
-    backpackSlot **wandSpells2;
+    backpackSlot **wand1;
+    backpackSlot ***wandSpells1;
     backpackSlot **backpackSpells;
 };
 
