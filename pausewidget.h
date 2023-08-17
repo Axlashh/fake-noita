@@ -2,24 +2,64 @@
 #define PAUSEWIDGET_H
 
 #include <QWidget>
+#include <QDropEvent>
+#include <QDrag>
+#include <QLabel>
+#include <people.h>
+
+enum slotType {
+    spl,
+    wad
+};
 
 namespace Ui {
 class pauseWidget;
-}
+};
+
+class backpackSlot : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit backpackSlot(QWidget *parent = nullptr, slotType t = spl, people *p = nullptr);
+    ~backpackSlot();
+    void setPos(int x, int y);
+
+private:
+    int type;
+    int widSpl = 50;
+    int heiSpl = 50;
+    int widWad = 150;
+    int heiWad = 100;
+    people *player;
+    void dragEnterEvent(QDragEnterEvent *event)	override;
+    void dragLeaveEvent(QDragLeaveEvent *event)	override;
+    void dragMoveEvent(QDragMoveEvent *event)	override;
+    void dropEvent(QDropEvent *event)			override;
+    void paintEvent(QPaintEvent *event) 		override;
+
+};
 
 class pauseWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit pauseWidget(QWidget *parent = nullptr);
+    explicit pauseWidget(QWidget *parent = nullptr, people *p = nullptr);
     ~pauseWidget();
+    void setPlayer(people *p);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
+    people *player;
 
 private:
     Ui::pauseWidget *ui;
+    backpackSlot *wand1;
+    backpackSlot *wand2;
+    backpackSlot **wandSpells1;
+    backpackSlot **wandSpells2;
+    backpackSlot **backpackSpells;
 };
 
 #endif // PAUSEWIDGET_H

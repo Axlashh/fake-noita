@@ -16,13 +16,13 @@ gameWidget::gameWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     isPaused = false;
-    this->menu = new pauseWidget(this);
-    menu->hide();
     initializeWorld();
     wand* aaaa = new normalWand();
     class::spell *bbb = new sparkBolt();
     aaaa->addSpell(bbb, 0);
     player->addWand(aaaa, 0);
+    this->menu = new pauseWidget(this, player);
+    menu->hide();
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [this]() {

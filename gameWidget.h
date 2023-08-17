@@ -23,6 +23,7 @@
 #include <math.h>
 #include <box2d/box2d.h>
 #include "userData.h"
+#include "pauseWidget.h"
 
 namespace Ui {
 class gameWidget;
@@ -63,7 +64,7 @@ private:
     people *player;
     b2Body *ground;
     bool isPaused;
-    QWidget *menu;
+    pauseWidget *menu;
 
     //前26个代表字母，第27个代表鼠标
     bool isPressed[27] = {};
