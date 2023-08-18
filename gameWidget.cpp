@@ -80,12 +80,13 @@ void gameWidget::paintEvent(QPaintEvent* event) {
         painter.rotate(degree);
         painter.drawImage(QRectF(QPointF(0, -0.2 * PPM), QPointF(1.2 * PPM, 0.2 * PPM)), tw->img);
         painter.restore();
+        painter.fillRect(QRect(0, height() - 40, tw->getMana(), 20), Qt::blue);
+        painter.fillRect(QRect(0, height() - 60, tw->getRecharge(), 20), Qt::red);
+        painter.fillRect(QRect(0, height() - 80, tw->getDelay(), 20), Qt::yellow);
     }
 
     //绘制jump框
     painter.fillRect(QRect(0, height() - 20, player->jump, 20), Qt::yellow);
-
-    //
 }
 
 void gameWidget::initializeWorld() {
@@ -143,7 +144,6 @@ void gameWidget::wandUpdate() {
     if (isPressed[26] && wd->readyToShoot()) {
         float cs = cos(radian), sn = sin(radian), xx = player->getPos().x, yy = player->getPos().y;
         wd->shoot(xx + 1.2 * cs, yy + 1.2 * sn, degree, world);
-//        wd->shoot(player->getPos().x + 1.2 * cos(degree), player->getPos().y + 1.2 * sin(degree), degree, world);
     }
 }
 

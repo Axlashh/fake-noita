@@ -15,16 +15,20 @@ class wand
 public:
     virtual ~wand();
     void shoot(float x, float y, int degree, b2World *world);
-    class::spell* extract(mod m = {1, 1});
+    class::spell* extract(mod m = {1, 1}, bool canBack = false);
     void update();
     bool readyToShoot();
     void addSpell(class::spell* spl, int n);
     class::spell *getSpell(int n);
     int getSpellNum();
+    int getMana();
+    int getRecharge();
+    int getDelay();
     //图片
     QImage img;
 
 protected:
+    bool roundDone();
     //基础施法延迟,帧为单位
     int bdelay;
     //法杖实时的延迟，不为0则无法施法

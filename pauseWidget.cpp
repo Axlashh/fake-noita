@@ -81,6 +81,8 @@ backpackSlot::backpackSlot(QWidget *parent, slotType t, people *p, int wandNum, 
 }
 
 backpackSlot::~backpackSlot() {
+    if (di != nullptr)
+        delete di;
 
 }
 
@@ -145,7 +147,9 @@ void backpackSlot::dropEvent(QDropEvent *event) {
     QDataStream qds(&ba, QIODevice::ReadOnly);
     qds>>wand1>>spell1;
     player->swap(wand1, wand2, spell1, spell2);
-    QWidget *draggedWidget = qobject_cast<QWidget*>(event->source());
+    backpackSlot *bp = qobject_cast<backpackSlot*>(event->source()->parent());
+    dragableIcon *draggedWidget = qobject_cast<dragableIcon*>(event->source());
+    bp->di = nullptr;
     delete draggedWidget;
     if (di != nullptr) {
         delete di;
@@ -156,10 +160,12 @@ void backpackSlot::dropEvent(QDropEvent *event) {
 
 void backpackSlot::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
-    if (di != nullptr)
+    if (di != nullptr) {
         di->show();
-    else
+    }
+    else {
         painter.fillRect(rect(), Qt::white);
+    }
 }
 
 pauseWidget::pauseWidget(QWidget *parent, people *p) :
@@ -192,7 +198,7 @@ pauseWidget::pauseWidget(QWidget *parent, people *p) :
             backpackSpells[i]->setPos(50 + i * 70, 660);
             wandSpells1[0][i]->hide();
             wandSpells1[1][i]->hide();
-            backpackSpells[i]->show();
+            backpackSpells[i]->hide();
         }
     }
 }
@@ -237,5 +243,6 @@ void pauseWidget::paintEvent(QPaintEvent *event) {
             backpackSpells[i]->setIcon(t);
         }
         if (tw == nullptr) backpackSpells[i]->setIcon(nullptr);
+        backpackSpells[i]->show();
     }
 }

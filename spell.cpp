@@ -28,7 +28,7 @@ void spell::compute(wand *wd, mod m) {
     //计算本法术所触发的法术
     this->spl = new spell*[this->drawNum];
     for (int i = 0; i < this->drawNum; i++) {
-        spell *tp = wd->extract();
+        spell *tp = wd->extract(m, true);
         if (tp == nullptr) break;
         this->spl[i] = tp;
     }
