@@ -10,6 +10,7 @@
 #include <cmath>
 #include "pausewidget.h"
 
+
 gameWidget::gameWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::gameWidget)
@@ -18,10 +19,24 @@ gameWidget::gameWidget(QWidget *parent) :
     isPaused = false;
     initializeWorld();
     wand* aaaa = new normalWand();
-    class::spell *bbb = new sparkBolt();
-    aaaa->addSpell(bbb, 0);
-    aaaa->addSpell(bbb->copy(), 1);
+    wand* pppp = new longWand();
+    aaaa->addSpell(new chain(), 0);
+    aaaa->addSpell(new doubleSpell(), 1);
+    aaaa->addSpell(new chain(), 2);
+    aaaa->addSpell(new sparkBoltt(), 3);
+    aaaa->addSpell(new energyOrb(), 4);
+    pppp->addSpell(new addMana(), 0);
+    pppp->addSpell(new doubleSpell(), 1);
+    pppp->addSpell(new speedUp(), 2);
+    pppp->addSpell(new damagePlus(), 3);
+    pppp->addSpell(new addMana(), 4);
+    pppp->addSpell(new chain(), 5);
+    pppp->addSpell(new sparkBolt(), 6);
+    pppp->addSpell(new energyOrbt(), 7);
+    pppp->addSpell(new doubleSpell(), 8);
+    pppp->addSpell(new sparkBolt(), 9);
     player->addWand(aaaa, 0);
+    player->addWand(pppp, 1);
     this->menu = new pauseWidget(this, player);
     menu->hide();
 
@@ -29,8 +44,8 @@ gameWidget::gameWidget(QWidget *parent) :
     connect(timer, &QTimer::timeout, [this]() {
         if (!isPaused) {
         myUpdate();
-        update();
         }
+        update();
     });
     timer->start(1000 / 60); // 设置更新频率为 60 Hz
 
@@ -57,17 +72,23 @@ void gameWidget::paintEvent(QPaintEvent* event) {
     painter.drawLine(0, ground->GetPosition().y * PPM, width(), ground->GetPosition().y * PPM);
 
     //绘制世界中的人物和法术
-    for (auto it = world->GetBodyList(); it != nullptr; it = it->GetNext()) {
+    for (auto it = world->GetBodyList(); it != nullptr;) {
         struct::userData* ud = reinterpret_cast<struct::userData*>(it->GetUserData().pointer);
         switch (ud->type) {
         case userDataType::player:
-            reinterpret_cast<people*>(ud->p)->draw(&painter, PPM);
+            reinterpret_cast<people*>(ud->p)->draw(&painter);
+            it = it->GetNext();
             break;
         case userDataType::spell:
-            reinterpret_cast<class::spell*>(ud->p)->draw(&painter, PPM);
+            reinterpret_cast<class::spell*>(ud->p)->draw(&painter);
+            it = it->GetNext();
+            if (reinterpret_cast<class::spell*>(ud->p)->dead()) {
+                delete reinterpret_cast<class::spell*>(ud->p);
+            }
             break;
 
         default:
+            it = it->GetNext();
             break;
         }
     }
@@ -78,15 +99,21 @@ void gameWidget::paintEvent(QPaintEvent* event) {
         painter.save();
         painter.translate(player->getPos().x * PPM, player->getPos().y * PPM);
         painter.rotate(degree);
-        painter.drawImage(QRectF(QPointF(0, -0.2 * PPM), QPointF(1.2 * PPM, 0.2 * PPM)), tw->img);
+        painter.drawImage(QRectF(QPointF(0, -0.2 * PPM), QPointF(1.3 * PPM, 0.2 * PPM)), tw->img);
         painter.restore();
-        painter.fillRect(QRect(0, height() - 40, tw->getMana(), 20), Qt::blue);
-        painter.fillRect(QRect(0, height() - 60, tw->getRecharge(), 20), Qt::red);
-        painter.fillRect(QRect(0, height() - 80, tw->getDelay(), 20), Qt::yellow);
+        painter.save();
+        painter.translate(width(), 0);
+        painter.scale(-1, 1);
+        painter.fillRect(QRect(0, height() - 20, tw->getMana(), 20), Qt::blue);
+        painter.fillRect(QRect(0, height() - 40, tw->getRecharge(), 20), Qt::red);
+        painter.fillRect(QRect(0, height() - 60, tw->getDelay(), 20), Qt::yellow);
+        painter.restore();
     }
 
     //绘制jump框
     painter.fillRect(QRect(0, height() - 20, player->jump, 20), Qt::yellow);
+    //绘制血条
+    painter.fillRect(QRect(0, height() - 40, player->getBlood(), 20), Qt::red);
 }
 
 void gameWidget::initializeWorld() {
@@ -94,7 +121,7 @@ void gameWidget::initializeWorld() {
     world = new b2World(gravity);
 
     //创建玩家
-    b2Vec2 pos(10.0f, 20.0f);
+    b2Vec2 pos(10.0f, 10.0f);
     player = new people(world, pos);
 
     createMap();
@@ -108,7 +135,10 @@ void gameWidget::createMap() {
     gd.position = b2Vec2(0, 0);
     gd.type = b2_staticBody;
     b2BodyUserData t;
-    t.pointer = (uintptr_t)"ground";
+    struct::userData *ud = new struct::userData();
+    ud->p = (uintptr_t)this;
+    ud->type = userDataType::ground;
+    t.pointer = (uintptr_t) ud;
     gd.userData = t;
 
     ground = world->CreateBody(&gd);
@@ -143,7 +173,7 @@ void gameWidget::wandUpdate() {
     //如果鼠标左键被按下，发射！
     if (isPressed[26] && wd->readyToShoot()) {
         float cs = cos(radian), sn = sin(radian), xx = player->getPos().x, yy = player->getPos().y;
-        wd->shoot(xx + 1.2 * cs, yy + 1.2 * sn, degree, world);
+        wd->shoot(xx + 1.3 * cs, yy + 1.3 * sn, degree, world);
     }
 }
 
@@ -209,15 +239,48 @@ void gameWidget::mouseMoveEvent(QMouseEvent *event) {
 }
 
 void playerContactListener::BeginContact(b2Contact *contact) {
-    b2Fixture *fixtureA = contact->GetFixtureA();
-    b2Fixture *fixtureB = contact->GetFixtureB();
-    b2Body *bodyA = fixtureA->GetBody();
-    b2Body *bodyB = fixtureB->GetBody();
+    b2Body *bodyA = contact->GetFixtureA()->GetBody();
+    b2Body *bodyB = contact->GetFixtureB()->GetBody();
     userData* udA = reinterpret_cast<userData*>(bodyA->GetUserData().pointer);
     userData* udB = reinterpret_cast<userData*>(bodyB->GetUserData().pointer);
-
-    if ((udA->type == userDataType::player && bodyA->GetPosition().y > bodyB->GetPosition().y) ||
-        (udB->type == userDataType::player && bodyB->GetPosition().y > bodyA->GetPosition().y)) {
+    if ((udA->type == userDataType::player && udB->type == userDataType::ground && bodyA->GetPosition().y > bodyB->GetPosition().y) ||
+        (udB->type == userDataType::player && udA->type == userDataType::ground && bodyB->GetPosition().y > bodyA->GetPosition().y)) {
+         //人物与地面相撞
         player->onGround = true;
+    } else if (udA->type == userDataType::spell && udB->type == userDataType::spell) {
+        //法术与法术相撞
+        contact->SetEnabled(false);
+    } else if (udA->type == userDataType::spell || udB->type == userDataType::spell) {
+        //法术与别的物体相撞
+        if (udB->type == userDataType::spell) {
+            auto tmp = udB;
+            udB = udA;
+            udA = tmp;
+        }
+        class::spell* s = reinterpret_cast<class::spell*>(udA->p);
+        if (udB->type == userDataType::ground) {
+            b2Vec2 nor = contact->GetManifold()->localNormal;
+            int deg = std::atan2(nor.y, nor.x) * 180.0 / M_PI;
+            s->bomb(deg);
+        }
+        else {
+            s->bomb();
+            if ((!s->safe() && udB->type == userDataType::player) || udB->type == userDataType::monster) {
+                character* ch = reinterpret_cast<character*>(udB->p);
+                ch->hurt(s->getDamage());
+            }
+        }
+    } else if (udA->type == userDataType::monster || udB->type == userDataType::monster) {
+        if (udB->type == userDataType::monster) {
+            auto tmp = udB;
+            udB = udA;
+            udA = tmp;
+        }
+        character* mon = reinterpret_cast<character*>(udA->p);
+        //怪物与人相撞
+        if (udB->type == userDataType::player) {
+            character* ch = reinterpret_cast<character*>(udB->p);
+            ch->hurt(mon->getDamage());
+        }
     }
 }

@@ -56,7 +56,6 @@ private:
     void playerMove();
     void wandUpdate();
     void myUpdate();
-    const float PPM = 50; //pixels per meter
     QTransform *transformer;
     QImage playerImg;
     QTimer *timer;

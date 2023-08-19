@@ -15,15 +15,19 @@ public:
     void moveLeft() override;
     wand* getWand(int n);
     void addWand(wand *w, int n);
-    void draw(QPainter *painter, float PPM)	override;
+    void draw(QPainter *painter)	override;
     class::spell* getPak(int n);
     void swap(int wand1, int wand2, int spell1, int spell2);
+    void hurt(int n)	override;
     float jump;
     float mana;
     bool onGround;
     int maxWand;
     int wandInHand;
     int backpackNum;
+
+protected:
+    void dead()	override;
 
 private:
     wand **wnd;

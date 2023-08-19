@@ -24,13 +24,17 @@ public:
     void setSpeed(float x, float y);
     virtual void moveLeft();
     virtual void moveRight();
-    virtual void draw(QPainter *painter, float PPM) = 0;
+    virtual void draw(QPainter *painter) = 0;
+    virtual void hurt(int n) = 0;
+    int getDamage();
+    int getBlood();
     float maxxSpeed;
     float maxySpeed;
     QImage img;
 
 
 protected:
+    virtual void dead() = 0;
     b2Body *body;
     b2BodyDef *bodyDef;
     b2FixtureDef *fixDef;
@@ -38,5 +42,6 @@ protected:
     float sizex;
     float sizey;
     int blood;
+    int damage;
 };
 #endif // CHARACTER_H

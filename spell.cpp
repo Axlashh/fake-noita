@@ -3,9 +3,16 @@
 #include <QDebug>
 
 spell::~spell() {
-    delete ud;
-    delete bodyDef;
-    delete fixDef;
+    if (bodyDef != nullptr)
+        delete bodyDef;
+    if (fixDef != nullptr)
+        delete fixDef;
+    if (body != nullptr)
+        body->GetWorld()->DestroyBody(body);
+    if (ud != nullptr)
+        delete ud;
+    if (spl != nullptr)
+        delete[] spl;
 }
 
 void spell::compute(wand *wd, mod m) {
@@ -26,37 +33,41 @@ void spell::compute(wand *wd, mod m) {
         break;
     }
     //计算本法术所触发的法术
-    this->spl = new spell*[this->drawNum];
     for (int i = 0; i < this->drawNum; i++) {
         spell *tp = wd->extract(m, true);
-        if (tp == nullptr) break;
         this->spl[i] = tp;
+        if (tp == nullptr) break;
     }
 }
 
 void spell::shoot(float x, float y, int degree, b2World *world) {
     if (this->type != pmodifier && this->type != multicast) {
-        this->creatBody(x, y, world);
+        this->creatBody(x, y, world, degree);
         this->setV(this->speed, degree);
     }
 
     if (this->type != withTrigger) {
         for (int i = 0; i < this->drawNum; i++) {
+            if (this->spl[i] == nullptr) break;
             this->spl[i]->shoot(x, y, degree, world);
         }
     }
 }
 
 int spell::getMana() {
-    return this->manaCast;
+    return manaCast;
 }
 
 int spell::getCastDelay() {
-    return this->castDelay;
+    return castDelay;
 }
 
 int spell::getRechargeTime() {
-    return this->rechargeTime;
+    return rechargeTime;
+}
+
+int spell::getDamage() {
+    return damage;
 }
 
 void spell::setV(int v, int degree) {
@@ -68,8 +79,8 @@ void spell::setV(int v, int degree) {
     this->body->SetLinearVelocity(bv);
 }
 
-void spell::creatBody(float x, float y, b2World *world) {
-    bodyDef->position.Set(x, y);
+void spell::creatBody(float x, float y, b2World *world, int deg) {
+    bodyDef->position.Set(x + cos(deg / 180.0f * M_PI) * r, y + sin(deg / 180.0f * M_PI) * r);
     body = world->CreateBody(bodyDef);
     body->CreateFixture(fixDef);
 }
@@ -78,8 +89,44 @@ QImage* spell::getimg() {
     return &img;
 }
 
-//默认的法术绘图函数，什么都不画
-void spell::draw(QPainter *painter, float PPM) {
+bool spell::dead() {
+    return isDead;
+}
+
+bool spell::safe() {
+    return isSafe;
+}
+
+void spell::draw(QPainter *painter) {
+    if (isBomb) {
+        if (bombTime-- < 0) {
+            isDead = true;
+            return;
+        }
+        if (!triggerShooted) {
+            for (int i = 0; i < drawNum; i++) {
+                if (spl[i] == nullptr) break;
+                spl[i]->shoot(triggerPos.x, triggerPos.y, triggerDeg, body->GetWorld());
+            }
+            triggerShooted = true;
+        }
+        painter->save();
+        painter->translate(body->GetPosition().x * PPM, body->GetPosition().y * PPM);
+        painter->drawImage(bombRec, bombImg);
+        painter->restore();
+        return;
+    }
+    if (lifetime-- < 0) {
+        bomb();
+        return;
+    }
+    auto vv = body->GetLinearVelocity();
+    int degree = std::atan2(vv.y, vv.x) * (180.0 / M_PI);
+    painter->save();
+    painter->translate(body->GetPosition().x * PPM, body->GetPosition().y * PPM);
+    painter->rotate(degree);
+    painter->drawImage(shootRec, shootImg);
+    painter->restore();
 
 }
 
@@ -98,16 +145,39 @@ void spell::copyTo(spell* t) {
     for (int i = 0; i < drawNum; i++) t->spl[i] = this->spl[i];
 }
 
-//void spell::update() {
-//    if (lifetime-- < 0)
-//        bomb();
-//}
+void spell::bomb() {
+    isBomb = true;
+    if (type == withTrigger) {
+        b2Vec2 v = body->GetLinearVelocity();
+        triggerDeg = std::atan2(v.y, v.x) * 180.0 / M_PI;
+        triggerPos = body->GetPosition();
+    }
+    if (body != nullptr){
+        body->SetAwake(false);
+    }
+}
+
+void spell::bomb(int deg) {
+    isBomb = true;
+    if (type == withTrigger) {
+        b2Vec2 v = body->GetLinearVelocity();
+        triggerDeg = std::atan2(v.y, v.x) * 180.0 / M_PI;
+        triggerDeg = 2 * deg - triggerDeg + 180;
+        triggerPos = body->GetPosition();
+        int tv = sqrt(v.x * v.x + v.y * v.y);
+        triggerPos.x += 0.01 * tv * cos(triggerDeg * M_PI / 180);
+        triggerPos.y += 0.01 * tv * sin(triggerDeg * M_PI / 180);
+    }
+    if (body != nullptr){
+        body->SetAwake(false);
+    }
+}
 
 //火花弹
 sparkBolt::sparkBolt() {
     type = projectile;
     drawNum = 0;
-    manaCast = 5;
+    manaCast = 10;
     damage = 3;
     speed = 50;
     spread = 5;
@@ -119,6 +189,15 @@ sparkBolt::sparkBolt() {
     spl = nullptr;
     r = 0.1;
     img = QImage("../23su/source/image/Spell_light_bullet.png");
+    shootImg = QImage("../23su/source/image/Spell_light_bullet.png");
+    bombImg = QImage("../23su/source/image/slbbb.png");
+    isBomb = false;
+    bombTime = 5;
+    isDead = false;
+    isSafe = false;
+    triggerShooted = true;
+    shootRec = QRectF(QPointF(-10.5f / 2.5f * r * PPM, -r * PPM), QPointF(r * PPM, r * PPM));
+    bombRec = QRectF(QPointF(-3 * r * PPM, -3 * r * PPM), QPointF(3 * r * PPM, 3 * r * PPM));
 
     //初始化bodyDef
     bodyDef = new b2BodyDef();
@@ -146,36 +225,66 @@ sparkBolt* sparkBolt::copy() {
     return t;
 }
 
-void sparkBolt::draw(QPainter *painter, float PPM) {
-    auto vv = body->GetLinearVelocity();
-    int degree = std::atan2(vv.y, vv.x) * (180.0 / M_PI);
-    painter->save();
-    painter->translate(body->GetPosition().x * PPM, body->GetPosition().y * PPM);
-    painter->rotate(degree);
-    painter->drawImage(QRectF(QPointF(-10.5f / 2.5f * r * PPM, -r * PPM), QPointF(r * PPM, r * PPM)), img);
-    painter->restore();
-}
-
-//带触发的火花弹
-sparkBoltt::sparkBoltt() {
+//带定时的火花弹
+sparkBoltt::sparkBoltt(){
+    img = QImage("../23su/source/image/Spell_light_bullet_timer.png");
+    lifetime = 10;
     type = withTrigger;
+    triggerShooted = false;
     drawNum = 1;
     spl = new spell*[drawNum];
 }
 
-sparkBoltt::~sparkBoltt() {
-    delete[] spl;
-}
-
 sparkBoltt* sparkBoltt::copy() {
     sparkBoltt* t = new sparkBoltt(*this);
-    t->bodyDef = new b2BodyDef(*this->bodyDef);
-    t->fixDef = new b2FixtureDef(*this->fixDef);
+    this->copyTo(t);
     return t;
 }
 
 energyOrb::energyOrb() {
+    type = projectile;
+    drawNum = 0;
+    manaCast = 30;
+    damage = 18;
+    speed = 10;
+    spread = 5;
+    lifetime = 1200;
+    castDelay = 8;
+    rechargeTime = 0;
+    speedRate = 1;
+    damageRate = 1;
+    spl = nullptr;
+    r = 0.8;
+    img = QImage("../23su/source/image/Spell_slow_bullet.png");
+    shootImg = QImage("../23su/source/image/Spell_slow_bullet_shoot.png");
+    bombImg = QImage("../23su/source/image/slbbb.png");
+    isBomb = false;
+    bombTime = 5;
+    isDead = false;
+    isSafe = false;
+    triggerShooted = true;
+    shootRec = QRectF(QPointF(-r * PPM, -r * PPM), QPointF(r * PPM, r * PPM));
+    bombRec = QRectF(QPointF(-2 * r * PPM, -2 * r * PPM), QPointF(2 * r * PPM, 2 * r * PPM));
 
+    //初始化bodyDef
+    bodyDef = new b2BodyDef();
+    ud = new b2BodyUserData();
+    userData *uud = new userData();
+    uud->p = (unsigned long long)this;
+    uud->type = userDataType::spell;
+    ud->pointer = (uintptr_t) uud;
+    bodyDef->type = b2_dynamicBody;
+    bodyDef->fixedRotation = false;
+    bodyDef->userData = *ud;
+    bodyDef->gravityScale = 0;
+
+    //初始化fixtureDef
+    fixDef = new b2FixtureDef();
+    b2CircleShape *cs = new b2CircleShape();
+    cs->m_radius = r;
+    fixDef->shape = cs;
+    fixDef->density = 0.5f;
+    fixDef->friction = 0;
 }
 
 energyOrb* energyOrb::copy() {
@@ -184,75 +293,149 @@ energyOrb* energyOrb::copy() {
     return t;
 }
 
-void energyOrb::draw(QPainter *painter, float PPM) {
-
-}
-
 energyOrbt::energyOrbt() {
+    img = QImage("../23su/source/image/Spell_slow_bullet_timer.png");
+    lifetime = 30;
+    type = withTrigger;
+    triggerShooted = false;
+    drawNum = 1;
+    spl = new spell*[drawNum];
 }
 
 energyOrbt* energyOrbt::copy() {
     energyOrbt* t = new energyOrbt(*this);
-    t->bodyDef = new b2BodyDef(*this->bodyDef);
-    t->fixDef = new b2FixtureDef(*this->fixDef);
+    this->copyTo(t);
     return t;
 }
 
 chain::chain() {
+    type = projectile;
+    drawNum = 0;
+    manaCast = 5;
+    damage = 10;
+    speed = 0;
+    spread = 5;
+    lifetime = 3;
+    castDelay = -1000;
+    rechargeTime = -10;
+    speedRate = 1;
+    damageRate = 1;
+    spl = nullptr;
+    r = 0.3;
+    imgs = new QImage[3];
+    imgs[0] = QImage("../23su/source/image/chain0.png");
+    imgs[1] = QImage("../23su/source/image/chain1.png");
+    imgs[2] = QImage("../23su/source/image/chain2.png");
+    img = QImage("../23su/source/image/Spell_chainsaw.png");
+    isBomb = false;
+    bombTime = 5;
+    isDead = false;
+    isSafe = true;
+    triggerShooted = true;
+    shootRec = QRectF(QPointF(-2 * r * PPM, -2 * r * PPM), QPointF(2 * r * PPM, 2 * r * PPM));
+    bombRec = QRectF(QPointF(-2 * r * PPM, -2 * r * PPM), QPointF(2 * r * PPM, 2 * r * PPM));
 
+    //初始化bodyDef
+    bodyDef = new b2BodyDef();
+    ud = new b2BodyUserData();
+    userData *uud = new userData();
+    uud->p = (unsigned long long)this;
+    uud->type = userDataType::spell;
+    ud->pointer = (uintptr_t) uud;
+    bodyDef->type = b2_dynamicBody;
+    bodyDef->fixedRotation = false;
+    bodyDef->userData = *ud;
+    bodyDef->gravityScale = 0;
+
+    //初始化fixtureDef
+    fixDef = new b2FixtureDef();
+    b2CircleShape *cs = new b2CircleShape();
+    cs->m_radius = r;
+    fixDef->shape = cs;
+    fixDef->density = 0.5f;
+    fixDef->friction = 0;
 }
 
 chain* chain::copy() {
     chain* t = new chain(*this);
-    t->bodyDef = new b2BodyDef(*this->bodyDef);
-    t->fixDef = new b2FixtureDef(*this->fixDef);
+    this->copyTo(t);
     return t;
 }
 
-void chain::draw(QPainter *painter, float PPM) {
-
+void chain::draw(QPainter *painter) {
+    int k = rand() % 3;
+    shootImg = imgs[k];
+    spell::draw(painter);
 }
 
 doubleSpell::doubleSpell() {
-
+    type = multicast;
+    drawNum = 2;
+    manaCast = 0;
+    castDelay = 0;
+    rechargeTime = 0;
+    speedRate = 1;
+    damageRate = 1;
+    spl = nullptr;
+    img = QImage("../23su/source/image/Spell_burst.png");
 }
 
 doubleSpell* doubleSpell::copy() {
     doubleSpell* t = new doubleSpell(*this);
-    t->bodyDef = new b2BodyDef(*this->bodyDef);
-    t->fixDef = new b2FixtureDef(*this->fixDef);
+    t->spl = new spell*[drawNum];
     return t;
 }
 
 addMana::addMana() {
-
+    type = pmodifier;
+    drawNum = 1;
+    manaCast = -30;
+    castDelay = 10;
+    rechargeTime = 0;
+    speedRate = 1;
+    damageRate = 1;
+    spl = nullptr;
+    img = QImage("../23su/source/image/Spell_mana.png");
 }
 
 addMana* addMana::copy() {
     addMana* t = new addMana(*this);
-    t->bodyDef = new b2BodyDef(*this->bodyDef);
-    t->fixDef = new b2FixtureDef(*this->fixDef);
+    t->spl = new spell*[drawNum];
     return t;
 }
 
 speedUp::speedUp() {
-
+    type = pmodifier;
+    drawNum = 1;
+    manaCast = 5;
+    castDelay = 0;
+    rechargeTime = 0;
+    speedRate = 2.0;
+    damageRate = 1;
+    spl = nullptr;
+    img = QImage("../23su/source/image/Spell_speed.png");
 }
 
 speedUp* speedUp::copy() {
     speedUp* t = new speedUp(*this);
-    t->bodyDef = new b2BodyDef(*this->bodyDef);
-    t->fixDef = new b2FixtureDef(*this->fixDef);
+    t->spl = new spell*[drawNum];
     return t;
 }
 
 damagePlus::damagePlus() {
-
+    type = pmodifier;
+    drawNum = 1;
+    manaCast = 5;
+    castDelay = 5;
+    rechargeTime = 0;
+    speedRate = 1;
+    damageRate = 1.1;
+    spl = nullptr;
+    img = QImage("../23su/source/image/Spell_damage.png");
 }
 
 damagePlus* damagePlus::copy() {
     damagePlus* t = new damagePlus(*this);
-    t->bodyDef = new b2BodyDef(*this->bodyDef);
-    t->fixDef = new b2FixtureDef(*this->fixDef);
+    t->spl = new spell*[drawNum];
     return t;
 }

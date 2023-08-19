@@ -27,16 +27,24 @@ public:
     virtual void shoot(float x, float y, int degree, b2World *world);
     //提供一个深复制的对象
     virtual spell* copy();
-    virtual void draw(QPainter *painter, float PPM);
-    void update();
+    //绘图函数
+    virtual void draw(QPainter *painter);
+    //获取该法术的图标
     QImage* getimg();
-//    virtual void bomb();
+    //法术爆炸
+    virtual void bomb();
+    virtual void bomb(int deg);
+    //返回法术是否该被销毁
+    bool dead();
+    //返回法术是否会对玩家造成伤害
+    bool safe();
 
     int getMana();
     int getCastDelay();
     int getRechargeTime();
+    int getDamage();
 
-    void creatBody(float x, float y, b2World *world);
+    void creatBody(float x, float y, b2World *world, int deg);
     void setV(int v, int degree);
 
 protected:
@@ -57,7 +65,7 @@ protected:
     int speed;
 //  散射角度
     int spread;
-//  持续时间，以帧为单位
+//  持续时间，以帧为单位, 带定时效果法术用的
     int lifetime;
 //  施放延迟
     int castDelay;
@@ -71,6 +79,10 @@ protected:
     spell **spl;
 //	图片
     QImage img;
+//	爆炸图片
+    QImage bombImg;
+//	发射时显示的图片
+    QImage shootImg;
 //	物体半径
     float r;
 //	body
@@ -80,6 +92,21 @@ protected:
     b2BodyDef *bodyDef;
 //	物体fixture
     b2FixtureDef *fixDef;
+
+//	爆炸后绘图需要的变量
+    bool isBomb;
+    int bombTime;
+    bool isDead;
+    bool isSafe;
+//	带有触发的法术是否已触发
+    bool triggerShooted;
+    b2Vec2 triggerPos;
+    int triggerDeg;
+
+//	物体在发射状态的绘图框
+    QRectF shootRec;
+//	物体在爆炸状态的绘图框
+    QRectF bombRec;
 };
 
 //	火花弹
@@ -87,7 +114,6 @@ class sparkBolt : public spell
 {
 public:
     sparkBolt();
-    void draw(QPainter *painter, float PPM)	override;
     sparkBolt* copy()	override;
 };
 
@@ -96,7 +122,6 @@ class sparkBoltt : public sparkBolt
 {
 public:
     sparkBoltt();
-    ~sparkBoltt()	override;
     sparkBoltt* copy()	override;
 };
 
@@ -105,7 +130,6 @@ class energyOrb : public spell
 {
 public:
     energyOrb();
-    void draw(QPainter *painter, float PPM)	override;
     energyOrb* copy()	override;
 };
 
@@ -117,13 +141,16 @@ public:
     energyOrbt* copy()	override;
 };
 
-//	链锯
+//	链锯(其实应该叫电火花)
 class chain : public spell
 {
 public:
     chain();
-    void draw(QPainter *painter, float PPM)	override;
     chain* copy()	override;
+    void draw(QPainter *painter)	override;
+
+private:
+    QImage *imgs;
 };
 
 //	双重释放

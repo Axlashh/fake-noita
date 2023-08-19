@@ -45,9 +45,10 @@ public:
     void setPos(int x, int y);
     void setIcon(dragableIcon *d);
     bool hasIcon();
+    void clear();
 
 private:
-    int type;
+    slotType type;
     int widSpl = 50;
     int heiSpl = 50;
     int widWad = 150;
@@ -57,11 +58,11 @@ private:
     people *player;
     dragableIcon *di;
     void dragEnterEvent(QDragEnterEvent *event)	override;
-    void dragLeaveEvent(QDragLeaveEvent *event)	override;
-    void dragMoveEvent(QDragMoveEvent *event)	override;
     void dropEvent(QDropEvent *event)			override;
     void paintEvent(QPaintEvent *event) 		override;
 
+signals:
+    void dropped();
 };
 
 class pauseWidget : public QWidget
@@ -72,17 +73,18 @@ public:
     explicit pauseWidget(QWidget *parent = nullptr, people *p = nullptr);
     ~pauseWidget();
     void setPlayer(people *p);
-    void myupdate();
 
 protected:
-    void paintEvent(QPaintEvent *event) override;
     people *player;
+    void paintEvent(QPaintEvent *event)	override;
 
 private:
     Ui::pauseWidget *ui;
     backpackSlot **wand1;
     backpackSlot ***wandSpells1;
     backpackSlot **backpackSpells;
+    QTimer *timer;
+
 };
 
 #endif // PAUSEWIDGET_H

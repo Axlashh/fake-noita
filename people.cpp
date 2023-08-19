@@ -77,7 +77,7 @@ wand* people::getWand(int n) {
     return wnd[n];
 }
 
-void people::draw(QPainter *painter, float PPM) {
+void people::draw(QPainter *painter) {
     painter->drawImage(QRectF(QPointF(body->GetPosition().x * PPM - this->getSize().x * PPM, body->GetPosition().y * PPM - this->getSize().y * PPM),
                              QPointF(body->GetPosition().x * PPM + this->getSize().x * PPM, body->GetPosition().y * PPM + this->getSize().y * PPM)), this->img);
 }
@@ -114,4 +114,14 @@ void people::swap(int wand1, int wand2, int spell1, int spell2) {
         wnd[wand1]->addSpell(wnd[wand2]->getSpell(spell2), spell1);
         wnd[wand2]->addSpell(tmp, spell2);
     }
+}
+
+void people::hurt(int n) {
+    blood -= n;
+    if (blood <= 0)
+        dead();
+}
+
+void people::dead() {
+
 }

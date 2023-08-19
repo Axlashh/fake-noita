@@ -53,3 +53,11 @@ void character::moveLeft() {
 void character::moveRight() {
 
 }
+
+int character::getDamage() {
+    return damage;
+}
+
+int character::getBlood() {
+    return blood;
+}

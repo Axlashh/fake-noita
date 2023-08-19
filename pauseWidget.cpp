@@ -2,6 +2,9 @@
 #include "ui_pauseWidget.h"
 #include <QPainter>
 #include <QDebug>
+#include <QTimer>
+
+bool upd = true;
 
 dragableIcon::dragableIcon(QWidget *parent, slotType t, int wandNum, int spellNum, QImage *img) :
     QWidget(parent),
@@ -21,7 +24,7 @@ void dragableIcon::mousePressEvent(QMouseEvent *event) {
     QDataStream dataStream(&ba, QIODevice::WriteOnly);
     switch(ty) {
     case wad:
-        dataStream<<wandNum<<0;
+        dataStream<<wandNum<<-1;
         mimedata->setData("wand", ba);
         break;
     case spl:
@@ -42,9 +45,6 @@ void dragableIcon::mousePressEvent(QMouseEvent *event) {
 
 void dragableIcon::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
-//    qDebug() <<rect();
-//    QRectF tr = rect();
-//    tr.setSize(img->size().scaled(rect().size(),Qt::KeepAspectRatio));
     QSize imageSize = img->size();
     QSize widgetSize = size();
     qreal aspectRatioImage = static_cast<qreal>(imageSize.width()) / imageSize.height();
@@ -101,6 +101,13 @@ bool backpackSlot::hasIcon() {
     return di != nullptr;
 }
 
+void backpackSlot::clear() {
+    if (di != nullptr) {
+        delete di;
+        di = nullptr;
+    }
+}
+
 void backpackSlot::dragEnterEvent(QDragEnterEvent *event) {
     const QMimeData *md = event->mimeData();
     if (event->source()->parent() != this && ((this->type == wad && md->hasFormat("wand")) || ((this->type == spl || this->type == pak) && (md->hasFormat("spell") || md->hasFormat("backpack"))))) {
@@ -108,15 +115,6 @@ void backpackSlot::dragEnterEvent(QDragEnterEvent *event) {
     } else {
         event->ignore();
     }
-
-}
-
-void backpackSlot::dragLeaveEvent(QDragLeaveEvent *event) {
-
-}
-
-void backpackSlot::dragMoveEvent(QDragMoveEvent *event) {
-
 }
 
 void backpackSlot::dropEvent(QDropEvent *event) {
@@ -147,15 +145,8 @@ void backpackSlot::dropEvent(QDropEvent *event) {
     QDataStream qds(&ba, QIODevice::ReadOnly);
     qds>>wand1>>spell1;
     player->swap(wand1, wand2, spell1, spell2);
-    backpackSlot *bp = qobject_cast<backpackSlot*>(event->source()->parent());
-    dragableIcon *draggedWidget = qobject_cast<dragableIcon*>(event->source());
-    bp->di = nullptr;
-    delete draggedWidget;
-    if (di != nullptr) {
-        delete di;
-        di = nullptr;
-    }
-    update();
+    emit dropped();
+    upd = true;
 }
 
 void backpackSlot::paintEvent(QPaintEvent *event) {
@@ -188,18 +179,16 @@ pauseWidget::pauseWidget(QWidget *parent, people *p) :
     wandSpells1[0] = new backpackSlot*[10];
     wandSpells1[1] = new backpackSlot*[10];
     backpackSpells = new backpackSlot*[10];
-    for (int k = 0; k < 2; k++) {
-        for (int i = 0; i < 10; i++) {
-            wandSpells1[0][i] = new backpackSlot(this, spl, player, 0, i);
-            wandSpells1[1][i] = new backpackSlot(this, spl, player, 1, i);
-            backpackSpells[i] = new backpackSlot(this, pak, player, i, 0);
-            wandSpells1[0][i]->setPos(50 + i * 70, 170);
-            wandSpells1[1][i]->setPos(50 + i * 70, 460);
-            backpackSpells[i]->setPos(50 + i * 70, 660);
-            wandSpells1[0][i]->hide();
-            wandSpells1[1][i]->hide();
-            backpackSpells[i]->hide();
-        }
+    for (int i = 0; i < 10; i++) {
+        wandSpells1[0][i] = new backpackSlot(this, spl, player, 0, i);
+        wandSpells1[1][i] = new backpackSlot(this, spl, player, 1, i);
+        backpackSpells[i] = new backpackSlot(this, pak, player, i, 0);
+        wandSpells1[0][i]->setPos(50 + i * 70, 170);
+        wandSpells1[1][i]->setPos(50 + i * 70, 460);
+        backpackSpells[i]->setPos(50 + i * 70, 660);
+        wandSpells1[0][i]->hide();
+        wandSpells1[1][i]->hide();
+        backpackSpells[i]->hide();
     }
 }
 
@@ -208,41 +197,42 @@ pauseWidget::~pauseWidget()
     delete ui;
 }
 
-void pauseWidget::setPlayer(people *p) {
-    player = p;
-}
-
 void pauseWidget::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     painter.fillRect(rect(), QColor(0, 0, 0, 150));
-    qDebug() <<99;
 
-    for (int i = 0; i < 2; i++) {
-        wand* tw = player->getWand(i);
-        if (tw != nullptr) {
-            if (!wand1[i]->hasIcon()) {
+    if (upd) {
+        for (int i = 0; i < 2; i++) {
+            wand* tw = player->getWand(i);
+            wand1[i]->clear();
+            if (tw != nullptr) {
                 dragableIcon *t = new dragableIcon(wand1[i], wad, i, 0, &tw->img);
                 wand1[i]->setIcon(t);
+                for (int j = 0; j < tw->getSpellNum(); j++) {
+                    class::spell *tsp = tw->getSpell(j);
+                    wandSpells1[i][j]->clear();
+                    if (tsp != nullptr) {
+                        dragableIcon *tt = new dragableIcon(wandSpells1[i][j], spl, i, j, tsp->getimg());
+                        wandSpells1[i][j]->setIcon(tt);
+                    }
+                    wandSpells1[i][j]->show();
+                }
+                for (int j = tw->getSpellNum(); j < 10; j++) {
+                    wandSpells1[i][j]->clear();
+                    wandSpells1[i][j]->hide();
+                }
             }
             wand1[i]->show();
-            for (int j = 0; j < tw->getSpellNum(); j++) {
-                class::spell *tsp = tw->getSpell(j);
-                if (tsp != nullptr && !wandSpells1[i][j]->hasIcon()) {
-                    dragableIcon *tt = new dragableIcon(wandSpells1[i][j], spl, i, j, tsp->getimg());
-                    wandSpells1[i][j]->setIcon(tt);
-                }
-                if (tsp == nullptr) wandSpells1[i][j]->setIcon(nullptr);
-                wandSpells1[i][j]->show();
+        }
+        for (int i = 0; i < 10; i++) {
+            class::spell* tw = player->getPak(i);
+            backpackSpells[i]->clear();
+            if (tw != nullptr) {
+                dragableIcon *t = new dragableIcon(backpackSpells[i], pak, i, 0, tw->getimg());
+                backpackSpells[i]->setIcon(t);
             }
+            backpackSpells[i]->show();
         }
-    }
-    for (int i = 0; i < 10; i++) {
-        class::spell* tw = player->getPak(i);
-        if (tw != nullptr && !backpackSpells[i]->hasIcon()) {
-            dragableIcon *t = new dragableIcon(backpackSpells[i], pak, i, 0, tw->getimg());
-            backpackSpells[i]->setIcon(t);
-        }
-        if (tw == nullptr) backpackSpells[i]->setIcon(nullptr);
-        backpackSpells[i]->show();
+        upd = false;
     }
 }
