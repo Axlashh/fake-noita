@@ -76,6 +76,7 @@ class::spell* wand::extract(mod m, bool canBack) {
 }
 
 void wand::shoot(float x, float y, int degree, b2World *world) {
+    startPos = pos;
     class::spell* t = extract();
     if (t == nullptr) return;
     //发射！
