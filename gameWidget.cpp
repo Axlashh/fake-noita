@@ -18,6 +18,8 @@ gameWidget::gameWidget(QWidget *parent) :
     ui->setupUi(this);
     isPaused = false;
     initializeWorld();
+    bufferPixmap = QPixmap(size());
+    bufferPixmap.fill(Qt::white);
     wand* aaaa = new normalWand();
     wand* pppp = new longWand();
     aaaa->addSpell(new chain(), 0);
@@ -58,62 +60,71 @@ gameWidget::~gameWidget()
 
 void gameWidget::paintEvent(QPaintEvent* event) {
 
-    QPainter painter(this);
+    QPainter painter(&bufferPixmap);
     painter.translate(0, height());
     painter.scale(1, -1);
 
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    // 清空背景
-    painter.fillRect(rect(), Qt::white);
+//    计时器的槽函数如果把update()放在里面，那么暂停换法杖时，暂停页面不会立马刷新
+//    但如果把update()放在外面，带计时的法术就不会暂停，所以只能在这里加判断isPaused
+//    很无语，不知道qt犯什么毛病
+//	  还用了一个缓冲pixmap来储存绘出的图，不然一暂停游戏画面就没了
+    if (!isPaused) {
+        // 清空背景
+        painter.fillRect(rect(), Qt::white);
 
-    // 绘制地面
-    painter.setPen(Qt::black);
-    painter.drawLine(0, ground->GetPosition().y * PPM, width(), ground->GetPosition().y * PPM);
+        // 绘制地面
+        painter.setPen(Qt::black);
+        painter.drawLine(0, ground->GetPosition().y * PPM, width(), ground->GetPosition().y * PPM);
 
-    //绘制世界中的人物和法术
-    for (auto it = world->GetBodyList(); it != nullptr;) {
-        struct::userData* ud = reinterpret_cast<struct::userData*>(it->GetUserData().pointer);
-        switch (ud->type) {
-        case userDataType::player:
-            reinterpret_cast<people*>(ud->p)->draw(&painter);
-            it = it->GetNext();
-            break;
-        case userDataType::spell:
-            reinterpret_cast<class::spell*>(ud->p)->draw(&painter);
-            it = it->GetNext();
-            if (reinterpret_cast<class::spell*>(ud->p)->dead()) {
-                delete reinterpret_cast<class::spell*>(ud->p);
+        //绘制世界中的人物和法术
+        for (auto it = world->GetBodyList(); it != nullptr;) {
+            struct::userData* ud = reinterpret_cast<struct::userData*>(it->GetUserData().pointer);
+            switch (ud->type) {
+            case userDataType::player:
+                reinterpret_cast<people*>(ud->p)->draw(&painter);
+                it = it->GetNext();
+                break;
+            case userDataType::spell:
+                reinterpret_cast<class::spell*>(ud->p)->draw(&painter);
+                it = it->GetNext();
+                if (reinterpret_cast<class::spell*>(ud->p)->dead()) {
+                    delete reinterpret_cast<class::spell*>(ud->p);
+                }
+                break;
+
+            default:
+                it = it->GetNext();
+                break;
             }
-            break;
-
-        default:
-            it = it->GetNext();
-            break;
         }
+
+        //绘制法杖
+        auto tw = player->getWand(player->wandInHand);
+        if (tw != nullptr) {
+            painter.save();
+            painter.translate(player->getPos().x * PPM, player->getPos().y * PPM);
+            painter.rotate(degree);
+            painter.drawImage(QRectF(QPointF(0, -0.2 * PPM), QPointF(1.3 * PPM, 0.2 * PPM)), tw->img);
+            painter.restore();
+            painter.save();
+            painter.translate(width(), 0);
+            painter.scale(-1, 1);
+            painter.fillRect(QRect(0, height() - 20, tw->getMana(), 20), Qt::blue);
+            painter.fillRect(QRect(0, height() - 40, tw->getRecharge(), 20), Qt::red);
+            painter.fillRect(QRect(0, height() - 60, tw->getDelay(), 20), Qt::yellow);
+            painter.restore();
+        }
+
+        //绘制jump框
+        painter.fillRect(QRect(0, height() - 20, player->jump, 20), Qt::yellow);
+        //绘制血条
+        painter.fillRect(QRect(0, height() - 40, player->getBlood(), 20), Qt::red);
     }
 
-    //绘制法杖
-    auto tw = player->getWand(player->wandInHand);
-    if (tw != nullptr) {
-        painter.save();
-        painter.translate(player->getPos().x * PPM, player->getPos().y * PPM);
-        painter.rotate(degree);
-        painter.drawImage(QRectF(QPointF(0, -0.2 * PPM), QPointF(1.3 * PPM, 0.2 * PPM)), tw->img);
-        painter.restore();
-        painter.save();
-        painter.translate(width(), 0);
-        painter.scale(-1, 1);
-        painter.fillRect(QRect(0, height() - 20, tw->getMana(), 20), Qt::blue);
-        painter.fillRect(QRect(0, height() - 40, tw->getRecharge(), 20), Qt::red);
-        painter.fillRect(QRect(0, height() - 60, tw->getDelay(), 20), Qt::yellow);
-        painter.restore();
-    }
-
-    //绘制jump框
-    painter.fillRect(QRect(0, height() - 20, player->jump, 20), Qt::yellow);
-    //绘制血条
-    painter.fillRect(QRect(0, height() - 40, player->getBlood(), 20), Qt::red);
+    QPainter realPainter(this);
+    realPainter.drawPixmap(0, 0, bufferPixmap);
 }
 
 void gameWidget::initializeWorld() {

@@ -54,20 +54,56 @@ void spell::shoot(float x, float y, int degree, b2World *world) {
     }
 }
 
-int spell::getMana() {
+QString spell::getName() {
+    return name;
+}
+
+QString spell::getExtraInfo() {
+    return extraInfo;
+}
+
+int spell::getType() {
+    return type;
+}
+
+int spell::getManaCast() {
     return manaCast;
 }
 
-int spell::getCastDelay() {
-    return castDelay;
+int spell::getDamage() {
+    return damage;
+}
+
+int spell::getSpeed() {
+    return speed;
+}
+
+int spell::getSpread() {
+    return spread;
+}
+
+int spell::getLifetime() {
+    return lifetime;
+}
+
+int spell::getDelay() {
+    return delay;
 }
 
 int spell::getRechargeTime() {
     return rechargeTime;
 }
 
-int spell::getDamage() {
-    return damage;
+float spell::getSpeedRate() {
+    return speedRate;
+}
+
+float spell::getDamageRate() {
+    return damageRate;
+}
+
+float spell::getR() {
+    return r;
 }
 
 void spell::setV(int v, int degree) {
@@ -175,6 +211,8 @@ void spell::bomb(int deg) {
 
 //火花弹
 sparkBolt::sparkBolt() {
+    name = "火花弹";
+    extraInfo = "威力小，速度快的普通魔法弹";
     type = projectile;
     drawNum = 0;
     manaCast = 10;
@@ -182,7 +220,7 @@ sparkBolt::sparkBolt() {
     speed = 50;
     spread = 5;
     lifetime = 1200;
-    castDelay = 3;
+    delay = 3;
     rechargeTime = 0;
     speedRate = 1;
     damageRate = 1;
@@ -227,6 +265,8 @@ sparkBolt* sparkBolt::copy() {
 
 //带定时的火花弹
 sparkBoltt::sparkBoltt(){
+    name = "带定时的火花弹";
+    extraInfo = "在定时结束或爆炸后施放另一法术的火花弹";
     img = QImage("../23su/source/image/Spell_light_bullet_timer.png");
     lifetime = 10;
     type = withTrigger;
@@ -242,6 +282,8 @@ sparkBoltt* sparkBoltt::copy() {
 }
 
 energyOrb::energyOrb() {
+    name = "能量球";
+    extraInfo = "缓慢而强大的能量球体";
     type = projectile;
     drawNum = 0;
     manaCast = 30;
@@ -249,7 +291,7 @@ energyOrb::energyOrb() {
     speed = 10;
     spread = 5;
     lifetime = 1200;
-    castDelay = 8;
+    delay = 8;
     rechargeTime = 0;
     speedRate = 1;
     damageRate = 1;
@@ -294,6 +336,8 @@ energyOrb* energyOrb::copy() {
 }
 
 energyOrbt::energyOrbt() {
+    name = "带定时的能量球";
+    extraInfo = "在定时结束或爆炸后施放另一法术的能量球";
     img = QImage("../23su/source/image/Spell_slow_bullet_timer.png");
     lifetime = 30;
     type = withTrigger;
@@ -309,6 +353,8 @@ energyOrbt* energyOrbt::copy() {
 }
 
 chain::chain() {
+    name = "链锯";
+    extraInfo = "看起来更应该叫小火花\n能清除本轮法术释放的施放延迟！";
     type = projectile;
     drawNum = 0;
     manaCast = 5;
@@ -316,7 +362,7 @@ chain::chain() {
     speed = 0;
     spread = 5;
     lifetime = 3;
-    castDelay = -1000;
+    delay = -1000;
     rechargeTime = -10;
     speedRate = 1;
     damageRate = 1;
@@ -369,10 +415,12 @@ void chain::draw(QPainter *painter) {
 }
 
 doubleSpell::doubleSpell() {
+    name = "双重释放";
+    extraInfo = "同时释放接下来的两个法术";
     type = multicast;
     drawNum = 2;
     manaCast = 0;
-    castDelay = 0;
+    delay = 0;
     rechargeTime = 0;
     speedRate = 1;
     damageRate = 1;
@@ -387,10 +435,12 @@ doubleSpell* doubleSpell::copy() {
 }
 
 addMana::addMana() {
+    name = "增加魔力";
+    extraInfo = "释放后能增加30点魔力，朴实无华";
     type = pmodifier;
     drawNum = 1;
     manaCast = -30;
-    castDelay = 10;
+    delay = 10;
     rechargeTime = 0;
     speedRate = 1;
     damageRate = 1;
@@ -405,10 +455,12 @@ addMana* addMana::copy() {
 }
 
 speedUp::speedUp() {
+    name = "加速";
+    extraInfo = "嗖嗖嗖！";
     type = pmodifier;
     drawNum = 1;
     manaCast = 5;
-    castDelay = 0;
+    delay = 0;
     rechargeTime = 0;
     speedRate = 2.0;
     damageRate = 1;
@@ -423,10 +475,12 @@ speedUp* speedUp::copy() {
 }
 
 damagePlus::damagePlus() {
+    name = "伤害增强";
+    extraInfo = "杀杀杀！";
     type = pmodifier;
     drawNum = 1;
     manaCast = 5;
-    castDelay = 5;
+    delay = 5;
     rechargeTime = 0;
     speedRate = 1;
     damageRate = 1.1;

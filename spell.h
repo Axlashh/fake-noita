@@ -39,16 +39,29 @@ public:
     //返回法术是否会对玩家造成伤害
     bool safe();
 
-    int getMana();
-    int getCastDelay();
-    int getRechargeTime();
+    QString getName();
+    QString getExtraInfo();
+    int getType();
+    int getManaCast();
     int getDamage();
+    int getSpeed();
+    int getSpread();
+    int getLifetime();
+    int getDelay();
+    int getRechargeTime();
+    float getSpeedRate();
+    float getDamageRate();
+    float getR();
 
     void creatBody(float x, float y, b2World *world, int deg);
     void setV(int v, int degree);
 
 protected:
     void copyTo(spell* t);
+    //名称
+    QString name;
+    //额外说明信息
+    QString extraInfo;
 //  法术类型
 //  0 projectile 	为投射物
 //  1 modifier 		为投射修正
@@ -68,7 +81,7 @@ protected:
 //  持续时间，以帧为单位, 带定时效果法术用的
     int lifetime;
 //  施放延迟
-    int castDelay;
+    int delay;
 //  充能时间
     int rechargeTime;
 //	速度修正倍率

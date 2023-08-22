@@ -24,19 +24,43 @@ class::spell* wand::getSpell(int n) {
 }
 
 int wand::getSpellNum() {
-    return this->capacity;
+    return capacity;
 }
 
 int wand::getMana() {
-    return this->mana;
+    return mana;
+}
+
+int wand::getMaxMana() {
+    return maxMana;
+}
+
+int wand::getManaChargeSpeed() {
+    return manaChargeSpeed;
+}
+
+int wand::getSpread() {
+    return spread;
 }
 
 int wand::getRecharge() {
-    return this->recharge;
+    return brecharge;
 }
 
 int wand::getDelay() {
-    return this->delay;
+    return bdelay;
+}
+
+int wand::getCapacity() {
+    return capacity;
+}
+
+QString wand::getName() {
+    return name;
+}
+
+QString wand::getExtraInfo() {
+    return extraInfo;
 }
 
 bool wand::roundDone() {
@@ -52,7 +76,7 @@ bool wand::roundDone() {
 
 class::spell* wand::extract(mod m, bool canBack) {
     //寻找法力值支持释放的法术
-    while (pos < capacity && (spl[pos] == nullptr || spl[pos]->getMana() > mana)) pos++;
+    while (pos < capacity && (spl[pos] == nullptr || spl[pos]->getManaCast() > mana)) pos++;
     //回绕完毕
     if (isBack && pos >= startPos)
         return nullptr;
@@ -65,8 +89,8 @@ class::spell* wand::extract(mod m, bool canBack) {
         return nullptr;
     }
     //消耗法力值
-    this->mana -= spl[pos]->getMana();
-    this->delay += spl[pos]->getCastDelay();
+    this->mana -= spl[pos]->getManaCast();
+    this->delay += spl[pos]->getDelay();
     this->recharge += spl[pos]->getRechargeTime();
     //抽取到的法术进行进一步计算
     class::spell *rt = spl[pos]->copy();
@@ -123,6 +147,7 @@ void wand::update() {
 }
 
 normalWand::normalWand() {
+    name = "666";
     delay = 0;
     recharge = 0;
     bdelay = 12;
@@ -140,6 +165,7 @@ normalWand::normalWand() {
 }
 
 longWand::longWand() {
+    name = "777";
     delay = 0;
     recharge = 0;
     bdelay = 16;
@@ -157,6 +183,7 @@ longWand::longWand() {
 }
 
 shortWand::shortWand() {
+    name = "999";
     delay = 0;
     recharge = 0;
     bdelay = -5;

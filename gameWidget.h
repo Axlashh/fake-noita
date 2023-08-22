@@ -64,6 +64,7 @@ private:
     b2Body *ground;
     bool isPaused;
     pauseWidget *menu;
+    QPixmap bufferPixmap;
 
     //前26个代表字母，第27个代表鼠标
     bool isPressed[27] = {};

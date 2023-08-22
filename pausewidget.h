@@ -7,6 +7,10 @@
 #include <QMimeData>
 #include <QLabel>
 #include <people.h>
+#include <QEnterEvent>
+#include <QLayout>
+#include <QFont>
+#include <QFrame>
 
 enum slotType {
     spl,
@@ -16,6 +20,39 @@ enum slotType {
 
 namespace Ui {
 class pauseWidget;
+};
+
+class messageBox : public QWidget {
+    Q_OBJECT
+
+public:
+    explicit messageBox(QWidget *parent = nullptr);
+    ~messageBox();
+    void setPos(int x, int y);
+
+public slots:
+    void showMessage(slotType type, void *ptr);
+    void hideMessage();
+
+private:
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QString typeText = "类型:";
+    QString nameText = "名称:";
+    QString rechargeText = "充能延迟:";
+    QString delayText = "施放延迟:";
+    QString spreadText = "散射角度:";
+    QString damageText = "伤害:";
+    QString rText = "半径:";
+    QString speedText = "速度:";
+    QString manaCastText = "法力消耗:";
+    QString damageRateText = "伤害倍率:";
+    QString speedRateText = "速度倍率:";
+    QString lifetimeText = "持续时间:";
+    QString capacityText = "容量:";
+    QString manaMaxText = "最大法力:";
+    QString manaChargeSpeedText = "法力回复速度:";
+    QLabel labels[11];
+    QFont font;
 };
 
 class dragableIcon : public QWidget {
@@ -53,16 +90,20 @@ private:
     int heiSpl = 50;
     int widWad = 150;
     int heiWad = 100;
+    people *player;
     int wandNum;
     int spellNum;
-    people *player;
     dragableIcon *di;
     void dragEnterEvent(QDragEnterEvent *event)	override;
     void dropEvent(QDropEvent *event)			override;
     void paintEvent(QPaintEvent *event) 		override;
+    void enterEvent(QEvent *event)		 		override;
+    void leaveEvent(QEvent *event)				override;
 
 signals:
     void dropped();
+    void mouseEnter(slotType type, void *ptr);
+    void mouseLeave();
 };
 
 class pauseWidget : public QWidget
@@ -83,6 +124,7 @@ private:
     backpackSlot **wand1;
     backpackSlot ***wandSpells1;
     backpackSlot **backpackSpells;
+    messageBox *msg;
     QTimer *timer;
 
 };

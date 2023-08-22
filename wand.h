@@ -22,12 +22,20 @@ public:
     class::spell *getSpell(int n);
     int getSpellNum();
     int getMana();
+    int getMaxMana();
+    int getManaChargeSpeed();
+    int getSpread();
     int getRecharge();
     int getDelay();
+    int getCapacity();
+    QString getName();
+    QString getExtraInfo();
     //图片
     QImage img;
 
 protected:
+    QString name;
+    QString extraInfo;
     bool roundDone();
     //基础施法延迟,帧为单位
     int bdelay;

@@ -6,6 +6,105 @@
 
 bool upd = true;
 
+messageBox::messageBox(QWidget *parent) :
+    QWidget(parent)
+{
+    setGeometry(QRect(0, 0, 480, 650));
+    for (int i = 0; i < 11; i++) {
+        mainLayout->addWidget(labels + i);
+    }
+    this->setLayout(mainLayout);
+    font.setFamily("Microsoft YaHei");
+    font.setPointSize(14); // 设置字体大小
+    font.setBold(true);    // 设置字体粗细
+    for (int i = 0; i < 11; i++) {
+        labels[i].setFont(font);
+    }
+    QPalette palette;
+    palette.setColor(QPalette::Window, QColor(0x7d, 0x8e, 0x95, 200));
+    this->setPalette(palette);
+    this->setAutoFillBackground(true);
+    this->hide();
+}
+
+messageBox::~messageBox() {
+    delete mainLayout;
+}
+
+void messageBox::setPos(int x, int y) {
+    this->move(x, y);
+}
+
+void messageBox::showMessage(slotType type, void *ptr) {
+    if (ptr == nullptr) {
+        this->hide();
+        return;
+    }
+    wand *wt;
+    class::spell *st;
+    switch (type) {
+    case wad:
+        wt = reinterpret_cast<wand*>(ptr);
+        labels[0].setText(typeText + "法杖");
+        labels[1].setText(nameText + wt->getName());
+        labels[2].setText(rechargeText + QString::number((float) wt->getRecharge() / 60.0f, 'f', 2) + "s");
+        labels[3].setText(delayText + QString::number((float) wt->getDelay() / 60.0f, 'f', 2) + "s");
+        labels[4].setText(spreadText + QString::number(wt->getSpread()));
+        labels[5].setText(capacityText + QString::number(wt->getCapacity()));
+        labels[6].setText(manaMaxText + QString::number(wt->getMaxMana()));
+        labels[7].setText(manaChargeSpeedText + QString::number(wt->getManaChargeSpeed()));
+        labels[8].setText(wt->getExtraInfo());
+        for (int i = 9; i < 11; i++) {
+            labels[i].clear();
+        }
+        break;
+
+    case spl:
+        st = reinterpret_cast<class::spell*>(ptr);
+        labels[0].setText(typeText + "法术");
+        labels[1].setText(nameText + st->getName());
+        labels[2].setText(rechargeText + QString::number((float) st->getRechargeTime() / 60.0f, 'f', 2) + "s");
+        labels[3].setText(delayText + QString::number((float) st->getDelay() / 60.0f, 'f', 2) + "s");
+        labels[4].setText(manaCastText + QString::number(st->getManaCast()));
+        switch (st->getType()) {
+        case projectile:
+        case withTrigger:
+            labels[5].setText(spreadText + QString::number(st->getSpread()));
+            labels[6].setText(damageText + QString::number(st->getDamage()));
+            labels[7].setText(lifetimeText + QString::number((float) st->getLifetime() / 60.0f, 'f', 2) + "s");
+            labels[8].setText(rText + QString::number(st->getR()));
+            labels[9].setText(speedText + QString::number(st->getSpeed()));
+            labels[10].setText(st->getExtraInfo());
+            break;
+        case multicast:
+            labels[5].setText(st->getExtraInfo());
+            for (int i = 6; i < 11; i++) {
+                labels[i].clear();
+            }
+            break;
+        case pmodifier:
+            labels[5].setText(speedRateText + QString::number(st->getSpeedRate(), 'f', 2));
+            labels[6].setText(damageRateText + QString::number(st->getDamageRate(), 'f', 2));
+            labels[7].setText(st->getExtraInfo());
+            for (int i = 8; i < 11; i++) {
+                labels[i].clear();
+            }
+            break;
+        default:
+            break;
+        }
+        break;
+
+    default:
+        break;
+    }
+    this->show();
+}
+
+void messageBox::hideMessage() {
+    this->hide();
+}
+
 dragableIcon::dragableIcon(QWidget *parent, slotType t, int wandNum, int spellNum, QImage *img) :
     QWidget(parent),
     ty(t),
@@ -66,7 +165,6 @@ void dragableIcon::paintEvent(QPaintEvent *event) {
 }
 
 dragableIcon::~dragableIcon() {
-    qDebug() << 11;
 }
 
 backpackSlot::backpackSlot(QWidget *parent, slotType t, people *p, int wandNum, int spellNum) :
@@ -159,6 +257,29 @@ void backpackSlot::paintEvent(QPaintEvent *event) {
     }
 }
 
+void backpackSlot::enterEvent(QEvent *event) {
+    switch (type) {
+    case wad:
+        emit mouseEnter(wad, player->getWand(wandNum));
+        break;
+
+    case spl:
+        emit mouseEnter(spl, player->getWand(wandNum)->getSpell(spellNum));
+        break;
+
+    case pak:
+        emit mouseEnter(spl, player->getPak(wandNum));
+        break;
+
+    default:
+        break;
+    }
+}
+
+void backpackSlot::leaveEvent(QEvent *event) {
+    emit mouseLeave();
+}
+
 pauseWidget::pauseWidget(QWidget *parent, people *p) :
     QWidget(parent),
     player(p),
@@ -168,6 +289,8 @@ pauseWidget::pauseWidget(QWidget *parent, people *p) :
     setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_TranslucentBackground);
     this->setGeometry(0, 0, parent->width(), parent->height());
+    msg = new messageBox(this);
+    msg->setPos(800, 100);
     wand1 = new backpackSlot*[2];
     wand1[0] = new backpackSlot(this, wad, player, 0);
     wand1[1] = new backpackSlot(this, wad, player, 1);
@@ -175,6 +298,10 @@ pauseWidget::pauseWidget(QWidget *parent, people *p) :
     wand1[1]->setPos(50, 340);
     wand1[0]->hide();
     wand1[1]->hide();
+    connect(wand1[0], &backpackSlot::mouseEnter, msg, &messageBox::showMessage);
+    connect(wand1[0], &backpackSlot::mouseLeave, msg, &messageBox::hideMessage);
+    connect(wand1[1], &backpackSlot::mouseEnter, msg, &messageBox::showMessage);
+    connect(wand1[1], &backpackSlot::mouseLeave, msg, &messageBox::hideMessage);
     wandSpells1 = new backpackSlot**[2];
     wandSpells1[0] = new backpackSlot*[10];
     wandSpells1[1] = new backpackSlot*[10];
@@ -189,6 +316,12 @@ pauseWidget::pauseWidget(QWidget *parent, people *p) :
         wandSpells1[0][i]->hide();
         wandSpells1[1][i]->hide();
         backpackSpells[i]->hide();
+        connect(wandSpells1[0][i], &backpackSlot::mouseEnter, msg, &messageBox::showMessage);
+        connect(wandSpells1[0][i], &backpackSlot::mouseLeave, msg, &messageBox::hideMessage);
+        connect(wandSpells1[1][i], &backpackSlot::mouseEnter, msg, &messageBox::showMessage);
+        connect(wandSpells1[1][i], &backpackSlot::mouseLeave, msg, &messageBox::hideMessage);
+        connect(backpackSpells[i], &backpackSlot::mouseEnter, msg, &messageBox::showMessage);
+        connect(backpackSpells[i], &backpackSlot::mouseLeave, msg, &messageBox::hideMessage);
     }
 }
 
