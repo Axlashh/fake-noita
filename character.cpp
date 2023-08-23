@@ -10,14 +10,6 @@ character::character(b2World *world, b2Vec2 pos) : character() {
 
 character::~character() {}
 
-void character::setBodyDef(b2BodyDef *bodyDef, b2World *world) {
-    body = world->CreateBody(bodyDef);
-}
-
-void character::setFixtrue(b2FixtureDef *fixDef) {
-    body->CreateFixture(fixDef);
-}
-
 //得到物体的质心坐标
 b2Vec2 character::getPos() {
     return body->GetPosition();
@@ -33,25 +25,11 @@ b2Vec2 character::getSpeed() {
     return body->GetLinearVelocity();
 }
 
-void character::addForce(b2Vec2 f) {
-    body->ApplyForceToCenter(f, true);
-}
-
-void character::setSpeed(b2Vec2 f) {
-    body->SetLinearVelocity(f);
-}
-
-void character::setSpeed(float x, float y) {
-    b2Vec2 t(x, y);
-    body->SetLinearVelocity(t);
-}
-
-void character::moveLeft() {
-
-}
-
-void character::moveRight() {
-
+void character::hurt(int n) {
+    blood -= n;
+    if (blood <= 0) {
+        dead();
+    }
 }
 
 int character::getDamage() {

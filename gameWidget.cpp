@@ -101,7 +101,7 @@ void gameWidget::paintEvent(QPaintEvent* event) {
         }
 
         //绘制法杖
-        auto tw = player->getWand(player->wandInHand);
+        auto tw = player->getWand(0);
         if (tw != nullptr) {
             painter.save();
             painter.translate(player->getPos().x * PPM, player->getPos().y * PPM);
@@ -118,7 +118,7 @@ void gameWidget::paintEvent(QPaintEvent* event) {
         }
 
         //绘制jump框
-        painter.fillRect(QRect(0, height() - 20, player->jump, 20), Qt::yellow);
+        painter.fillRect(QRect(0, height() - 20, player->getJump(), 20), Qt::yellow);
         //绘制血条
         painter.fillRect(QRect(0, height() - 40, player->getBlood(), 20), Qt::red);
     }
@@ -166,7 +166,7 @@ void gameWidget::myUpdate() {
     degree = radian * (180.0 / M_PI);
 
     //计算人物移动
-    playerMove();
+    player->move(isPressed);
 
     wandUpdate();
     world->Step(1.0f / 60.0f, 6, 2);
@@ -174,46 +174,17 @@ void gameWidget::myUpdate() {
 
 void gameWidget::wandUpdate() {
     //对玩家的每根法杖进行更新
-    for (int i = 0; i < player->maxWand; i++) {
+    for (int i = 0; i < player->getMaxWand(); i++) {
         if (player->getWand(i) != nullptr) {
             player->getWand(i)->update();
         }
     }
 
-    auto wd = player->getWand(player->wandInHand);
+    auto wd = player->getWand(0);
     //如果鼠标左键被按下，发射！
     if (isPressed[26] && wd->readyToShoot()) {
         float cs = cos(radian), sn = sin(radian), xx = player->getPos().x, yy = player->getPos().y;
         wd->shoot(xx + 1.3 * cs, yy + 1.3 * sn, degree, world);
-    }
-}
-
-void gameWidget::playerMove() {
-    float xv = player->getSpeed().x;
-    if (isPressed[0]) {
-        if (xv >= -player->maxxSpeed) {
-            if (xv > 0) player->addForce(b2Vec2(-1000, 0));
-            player->addForce(b2Vec2(-1000, 0));
-        } else {
-        }
-    }
-    if (isPressed[3]) {
-        if (xv <= player->maxxSpeed) {
-            if (xv < 0) player->addForce(b2Vec2(1000, 0));
-            player->addForce(b2Vec2(1000, 0));
-        } else {
-        }
-    }
-    if (isPressed['w' - 'a']) {
-        if (player->jump > 0) {
-            float yv = player->getSpeed().y;
-            player->addForce(b2Vec2(0, 600 + (player->maxySpeed - (yv > 0 ? yv : 0)) * 300));
-            player->jump -= 0.5;
-            player->onGround = false;
-        }
-    } else if (player->jump < 100){
-        if (player->onGround) player->jump += 3;
-        else player->jump += 0.1;
     }
 }
 
@@ -257,7 +228,7 @@ void playerContactListener::BeginContact(b2Contact *contact) {
     if ((udA->type == userDataType::player && udB->type == userDataType::ground && bodyA->GetPosition().y > bodyB->GetPosition().y) ||
         (udB->type == userDataType::player && udA->type == userDataType::ground && bodyB->GetPosition().y > bodyA->GetPosition().y)) {
          //人物与地面相撞
-        player->onGround = true;
+        player->setOnGround();
     } else if (udA->type == userDataType::spell && udB->type == userDataType::spell) {
         //法术与法术相撞
         contact->SetEnabled(false);

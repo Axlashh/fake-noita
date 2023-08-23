@@ -1,4 +1,5 @@
 #include "people.h"
+#include <QDebug>
 
 people::people()
 {
@@ -28,11 +29,9 @@ people::people()
     body = nullptr;
     blood = 100;
     jump = 100;
-    mana = 100;
     maxxSpeed = 3;
     maxySpeed = 4;
     maxWand = 2;
-    wandInHand = 0;
     wnd = new wand*[maxWand];
     for (int i = 0; i < maxWand; i++) {
         wnd[i] = nullptr;
@@ -57,14 +56,6 @@ people::~people() {
     delete fixDef;
     delete wnd;
     delete[] backpack;
-}
-
-void people::moveRight() {
-    body->SetLinearVelocity(b2Vec2(1.5, 0));
-}
-
-void people::moveLeft() {
-    body->SetLinearVelocity(b2Vec2(-1.5, 0));
 }
 
 void people::addWand(wand *w, int n) {
@@ -116,12 +107,47 @@ void people::swap(int wand1, int wand2, int spell1, int spell2) {
     }
 }
 
-void people::hurt(int n) {
-    blood -= n;
-    if (blood <= 0)
-        dead();
+void people::move(bool isPressed[]) {
+    float xv = body->GetLinearVelocity().x;
+    float yv = body->GetLinearVelocity().y;
+    if (isPressed[0]) {
+        if (xv >= -maxxSpeed) {
+            if (xv > 0) body->ApplyForceToCenter(b2Vec2(-1000, 0), true);
+            body->ApplyForceToCenter(b2Vec2(-1000, 0), true);
+        } else {
+        }
+    }
+    if (isPressed[3]) {
+        if (xv <= maxxSpeed) {
+            if (xv < 0) body->ApplyForceToCenter(b2Vec2(1000, 0), true);
+            body->ApplyForceToCenter(b2Vec2(1000, 0), true);
+        } else {
+        }
+    }
+    if (isPressed['w' - 'a']) {
+        if (jump > 0) {
+            body->ApplyForceToCenter(b2Vec2(0, 600 + (maxySpeed - (yv > 0 ? yv : 0)) * 300), true);
+            jump -= 0.5;
+            onGround = false;
+        }
+    } else if (jump < 100){
+        if (onGround) jump += 5;
+        else jump += 0.1;
+    }
 }
 
 void people::dead() {
 
+}
+
+void people::setOnGround() {
+    onGround = true;
+}
+
+int people::getJump() {
+    return jump;
+}
+
+int people::getMaxWand() {
+    return maxWand;
 }
