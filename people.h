@@ -17,6 +17,7 @@ public:
     class::spell* getPak(int n);
     void swap(int wand1, int wand2, int spell1, int spell2);
     void move(bool isPressed[]);
+    void move(b2Vec2 pos)	override; //凑数的
     void setOnGround();
     int getMaxWand();
     int getJump();

@@ -107,6 +107,8 @@ void people::swap(int wand1, int wand2, int spell1, int spell2) {
     }
 }
 
+void people::move(b2Vec2 pos) {};
+
 void people::move(bool isPressed[]) {
     float xv = body->GetLinearVelocity().x;
     float yv = body->GetLinearVelocity().y;

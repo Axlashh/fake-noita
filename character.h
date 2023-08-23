@@ -20,6 +20,7 @@ public:
     void hurt(int n);
     int getDamage();
     int getBlood();
+    virtual void move(b2Vec2 pos) = 0;
     float maxxSpeed;
     float maxySpeed;
     QImage img;
