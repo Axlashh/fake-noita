@@ -8,6 +8,7 @@
 #include <QImage>
 #include <qnamespace.h>
 #include <cmath>
+#include "tile.h"
 #include "pausewidget.h"
 
 
@@ -75,8 +76,8 @@ void gameWidget::paintEvent(QPaintEvent* event) {
         painter.fillRect(rect(), Qt::white);
 
         // 绘制地面
-        painter.setPen(Qt::black);
-        painter.drawLine(0, ground->GetPosition().y * PPM, width(), ground->GetPosition().y * PPM);
+//        painter.setPen(Qt::black);
+//        painter.drawLine(0, ground->GetPosition().y * PPM, width(), ground->GetPosition().y * PPM);
 
         //绘制世界中的人物和法术
         for (auto it = world->GetBodyList(); it != nullptr;) {
@@ -93,7 +94,10 @@ void gameWidget::paintEvent(QPaintEvent* event) {
                     delete reinterpret_cast<class::spell*>(ud->p);
                 }
                 break;
-
+            case userDataType::ground:
+                reinterpret_cast<tile*>(ud->p)->draw(&painter);
+                it = it->GetNext();
+                break;
             default:
                 it = it->GetNext();
                 break;
@@ -142,22 +146,10 @@ void gameWidget::initializeWorld() {
 }
 
 void gameWidget::createMap() {
-    b2BodyDef gd;
-    gd.position = b2Vec2(0, 0);
-    gd.type = b2_staticBody;
-    b2BodyUserData t;
-    struct::userData *ud = new struct::userData();
-    ud->p = (uintptr_t)this;
-    ud->type = userDataType::ground;
-    t.pointer = (uintptr_t) ud;
-    gd.userData = t;
-
-    ground = world->CreateBody(&gd);
-
-    b2EdgeShape gdS;
-    gdS.SetTwoSided(b2Vec2(0, 0), b2Vec2(800, 0));
-
-    ground->CreateFixture(&gdS, 0);
+    for (int i = 0; i < 30; i++) {
+        tile *p = new tile(world, i + 0.5, 0.5);
+        tile *pp = new tile(world, 0.5, i + 0.5);
+    }
 }
 
 void gameWidget::myUpdate() {

@@ -5,16 +5,16 @@ people::people()
 {
     //定义bodyDef
     bodyDef = new b2BodyDef();
-    b2BodyUserData t;
-    ud = new userData();
-    ud->p = (uintptr_t)this;
-    ud->type = userDataType::player;
-    t.pointer = (uintptr_t) ud;
+    ud = new b2BodyUserData();
+    userData *uud = new userData();
+    uud->p = (uintptr_t)this;
+    uud->type = userDataType::player;
+    ud->pointer = (uintptr_t) uud;
 
     bodyDef->allowSleep = false;
     bodyDef->type = b2_dynamicBody;
     bodyDef->fixedRotation = true;
-    bodyDef->userData = t;
+    bodyDef->userData = *ud;
 
     //定义fixtureDef
     b2PolygonShape *playerShape = new b2PolygonShape();

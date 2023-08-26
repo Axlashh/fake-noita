@@ -24,6 +24,7 @@ SOURCES += \
     people.cpp \
     registerWidget.cpp \
     spell.cpp \
+    tile.cpp \
     userData.cpp \
     wand.cpp
 
@@ -35,6 +36,7 @@ HEADERS += \
     people.h \
     registerWidget.h \
     spell.h \
+    tile.h \
     userData.h \
     wand.h
 

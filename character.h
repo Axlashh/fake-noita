@@ -23,15 +23,15 @@ public:
     virtual void move(b2Vec2 pos) = 0;
     float maxxSpeed;
     float maxySpeed;
-    QImage img;
 
 
 protected:
+    QImage img;
     virtual void dead() = 0;
     b2Body *body;
     b2BodyDef *bodyDef;
     b2FixtureDef *fixDef;
-    userData *ud;
+    b2BodyUserData *ud;
     float sizex;
     float sizey;
     int blood;
