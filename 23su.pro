@@ -20,6 +20,7 @@ SOURCES += \
     gameWidget.cpp \
     loginWidget.cpp \
     main.cpp \
+    monster.cpp \
     pauseWidget.cpp \
     people.cpp \
     registerWidget.cpp \
@@ -32,6 +33,7 @@ HEADERS += \
     character.h \
     gameWidget.h \
     loginWidget.h \
+    monster.h \
     pauseWidget.h \
     people.h \
     registerWidget.h \

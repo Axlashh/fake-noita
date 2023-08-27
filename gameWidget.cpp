@@ -83,7 +83,7 @@ void gameWidget::paintEvent(QPaintEvent* event) {
         for (auto it = world->GetBodyList(); it != nullptr;) {
             struct::userData* ud = reinterpret_cast<struct::userData*>(it->GetUserData().pointer);
             switch (ud->type) {
-            case userDataType::player:
+             case userDataType::player:
                 reinterpret_cast<people*>(ud->p)->draw(&painter);
                 it = it->GetNext();
                 break;
@@ -138,7 +138,6 @@ void gameWidget::initializeWorld() {
     //创建玩家
     b2Vec2 pos(10.0f, 10.0f);
     player = new people(world, pos);
-
     createMap();
     playerContactListener *pcl = new playerContactListener();
     pcl->player = player;

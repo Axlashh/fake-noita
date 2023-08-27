@@ -19,12 +19,10 @@
 
 #include <character.h>
 #include <people.h>
-
 #include <math.h>
 #include <box2d/box2d.h>
 #include "userData.h"
 #include "pauseWidget.h"
-
 namespace Ui {
 class gameWidget;
 }
