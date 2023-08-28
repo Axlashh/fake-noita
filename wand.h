@@ -27,6 +27,8 @@ public:
     int getSpread();
     int getRecharge();
     int getDelay();
+    int getBRecharge();
+    int getBDelay();
     int getCapacity();
     QString getName();
     QString getExtraInfo();

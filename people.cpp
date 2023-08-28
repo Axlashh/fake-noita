@@ -36,7 +36,7 @@ people::people()
     for (int i = 0; i < maxWand; i++) {
         wnd[i] = nullptr;
     }
-    img = QImage("../23su/source/image/player.jpg").mirrored(false, true);
+    img = QImage("../23su/source/image/player.png").mirrored(false, true);
     backpackNum = 10;
     backpack = new class::spell*[backpackNum];
     for (int i = 0; i < backpackNum; i++)

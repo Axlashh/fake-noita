@@ -2,7 +2,7 @@
 
 zombie::zombie()
 {
-    img = QImage("../23su/source/image/zombie.jpg").mirrored(false, true);
+    img = QImage("../23su/source/image/zombie.png").mirrored(false, true);
     bodyDef = new b2BodyDef();
     ud = new b2BodyUserData();
     userData * uud =new userData();
@@ -49,4 +49,9 @@ void zombie::draw(QPainter *painter)
 {
     painter->drawImage(QRectF(QPointF(body->GetPosition().x * PPM - this->getSize().x * PPM, body->GetPosition().y * PPM - this->getSize().y * PPM),
                              QPointF(body->GetPosition().x * PPM + this->getSize().x * PPM, body->GetPosition().y * PPM + this->getSize().y * PPM)), this->img);
+}
+void zombie::update()
+{
+    if(delay>0)
+      delay--;
 }

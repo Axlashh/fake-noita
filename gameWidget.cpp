@@ -160,9 +160,10 @@ void gameWidget::myUpdate() {
     player->move(isPressed);
 
     wandUpdate();
+    monsterUpdate();
+
     world->Step(1.0f / 60.0f, 6, 2);
 }
-
 void gameWidget::wandUpdate() {
     //对玩家的每根法杖进行更新
     for (int i = 0; i < player->getMaxWand(); i++) {
@@ -178,7 +179,15 @@ void gameWidget::wandUpdate() {
         wd->shoot(xx + 1.3 * cs, yy + 1.3 * sn, degree, world);
     }
 }
+void gameWidget::monsterUpdate(){
 
+    for (auto it = world->GetBodyList(); it != nullptr; it = it->GetNext()) {
+        struct::userData* ud = reinterpret_cast<struct::userData*>(it->GetUserData().pointer);
+        if (ud->type == userDataType::monster) {
+            reinterpret_cast<character*>(ud->p)->update();
+        }
+    }
+}
 void gameWidget::keyPressEvent(QKeyEvent *event) {
     int key = event->key();
     if (key >= 0x41 && key <= 0x5a) isPressed[key - 0x41] = true;
@@ -193,7 +202,7 @@ void gameWidget::keyPressEvent(QKeyEvent *event) {
     }
 }
 
-void gameWidget::keyReleaseEvent(QKeyEvent *event) {
+void gameWidget::keyReleaseEvent(QKeyEvent *event){
     int key = event->key();
     if (key >= 0x41 && key <= 0x5a) isPressed[key - 0x41] = false;
 }

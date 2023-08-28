@@ -13,6 +13,7 @@ public:
     character();
     virtual ~character() = 0;
     character(b2World *world, b2Vec2 pos);
+    virtual void update();
     b2Vec2 getPos();
     b2Vec2 getSize();
     b2Vec2 getSpeed();

@@ -47,8 +47,8 @@ void messageBox::showMessage(slotType type, void *ptr) {
         wt = reinterpret_cast<wand*>(ptr);
         labels[0].setText(typeText + "法杖");
         labels[1].setText(nameText + wt->getName());
-        labels[2].setText(rechargeText + QString::number((float) wt->getRecharge() / 60.0f, 'f', 2) + "s");
-        labels[3].setText(delayText + QString::number((float) wt->getDelay() / 60.0f, 'f', 2) + "s");
+        labels[2].setText(rechargeText + QString::number((float) wt->getBRecharge() / 60.0f, 'f', 2) + "s");
+        labels[3].setText(delayText + QString::number((float) wt->getBDelay() / 60.0f, 'f', 2) + "s");
         labels[4].setText(spreadText + QString::number(wt->getSpread()));
         labels[5].setText(capacityText + QString::number(wt->getCapacity()));
         labels[6].setText(manaMaxText + QString::number(wt->getMaxMana()));

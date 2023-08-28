@@ -7,9 +7,13 @@ class zombie:public character
 {
 public:
     zombie();
-    ~zombie();
+    ~zombie()   override;
     zombie(b2World *world,b2Vec2 pos);
-    void draw(QPainter * painter);
+    void draw(QPainter * painter)  override;
+    void update()   override;
+private:
+    int delay;
+
 };
 
 

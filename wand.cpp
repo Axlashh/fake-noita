@@ -44,10 +44,18 @@ int wand::getSpread() {
 }
 
 int wand::getRecharge() {
-    return brecharge;
+    return recharge;
 }
 
 int wand::getDelay() {
+    return delay;
+}
+
+int wand::getBRecharge() {
+    return brecharge;
+}
+
+int wand::getBDelay() {
     return bdelay;
 }
 

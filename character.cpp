@@ -10,6 +10,8 @@ character::character(b2World *world, b2Vec2 pos) : character() {
 
 character::~character() {}
 
+void character::update() {}
+
 //得到物体的质心坐标
 b2Vec2 character::getPos() {
     return body->GetPosition();

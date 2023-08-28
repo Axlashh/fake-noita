@@ -19,6 +19,7 @@
 
 #include <character.h>
 #include <people.h>
+#include <monster.h>
 #include <math.h>
 #include <box2d/box2d.h>
 #include "userData.h"
@@ -53,12 +54,14 @@ private:
     void createMap();
     void playerMove();
     void wandUpdate();
+    void monsterUpdate();
     void myUpdate();
     QTransform *transformer;
     QImage playerImg;
     QTimer *timer;
     b2World *world;
     people *player;
+    zombie *monster;
     b2Body *ground;
     bool isPaused;
     pauseWidget *menu;
