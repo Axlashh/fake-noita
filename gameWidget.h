@@ -74,6 +74,9 @@ private:
     //人物到鼠标的角度
     int degree;
     float radian;
+
+    int monsterRefresh;
+    const int mr = 120;
 };
 
 class playerContactListener : public b2ContactListener {

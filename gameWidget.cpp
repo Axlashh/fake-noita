@@ -42,6 +42,8 @@ gameWidget::gameWidget(QWidget *parent) :
     player->addWand(pppp, 1);
     this->menu = new pauseWidget(this, player);
     menu->hide();
+    monsterRefresh = 0;
+    new zombie(world, b2Vec2(15.0f, 20.0f));
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [this]() {
@@ -98,9 +100,14 @@ void gameWidget::paintEvent(QPaintEvent* event) {
                 reinterpret_cast<tile*>(ud->p)->draw(&painter);
                 it = it->GetNext();
                 break;
-            default:
+            case userDataType::monster:
+                auto ppppp = reinterpret_cast<class::zombie*>(ud->p);
+                ppppp->draw(&painter);
                 it = it->GetNext();
                 break;
+//            default:
+//                it = it->GetNext();
+//                break;
             }
         }
 
@@ -138,6 +145,7 @@ void gameWidget::initializeWorld() {
     //创建玩家
     b2Vec2 pos(10.0f, 10.0f);
     player = new people(world, pos);
+
     createMap();
     playerContactListener *pcl = new playerContactListener();
     pcl->player = player;
@@ -163,6 +171,11 @@ void gameWidget::myUpdate() {
     monsterUpdate();
 
     world->Step(1.0f / 60.0f, 6, 2);
+
+//    if (monsterRefresh++ >= mr) {
+//        monsterRefresh = 0;
+//        zombie(world, b2Vec2(15.0f, 20.0f));
+//    }
 }
 void gameWidget::wandUpdate() {
     //对玩家的每根法杖进行更新
@@ -181,12 +194,6 @@ void gameWidget::wandUpdate() {
 }
 void gameWidget::monsterUpdate(){
 
-    for (auto it = world->GetBodyList(); it != nullptr; it = it->GetNext()) {
-        struct::userData* ud = reinterpret_cast<struct::userData*>(it->GetUserData().pointer);
-        if (ud->type == userDataType::monster) {
-            reinterpret_cast<character*>(ud->p)->update();
-        }
-    }
 }
 void gameWidget::keyPressEvent(QKeyEvent *event) {
     int key = event->key();

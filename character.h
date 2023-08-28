@@ -17,7 +17,7 @@ public:
     b2Vec2 getPos();
     b2Vec2 getSize();
     b2Vec2 getSpeed();
-    virtual void draw(QPainter *painter) = 0;
+    virtual void draw(QPainter *painter);
     void hurt(int n);
     int getDamage();
     int getBlood();

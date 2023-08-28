@@ -23,11 +23,11 @@ zombie::zombie()
     fixDef = new b2FixtureDef();
     fixDef->shape = playerShape;	//形状
     fixDef->friction = 1;		    //摩擦系数
-    fixDef->restitution = 1; 		//弹性
+    fixDef->restitution = 0; 		//弹性
     fixDef->density = 50;			//密度
     fixDef->isSensor = false;       //传感器
 
-    body=nullptr;
+    body = nullptr;
 }
 
 
@@ -50,8 +50,11 @@ void zombie::draw(QPainter *painter)
     painter->drawImage(QRectF(QPointF(body->GetPosition().x * PPM - this->getSize().x * PPM, body->GetPosition().y * PPM - this->getSize().y * PPM),
                              QPointF(body->GetPosition().x * PPM + this->getSize().x * PPM, body->GetPosition().y * PPM + this->getSize().y * PPM)), this->img);
 }
+void zombie::move(b2Vec2 pos) {
+}
+void zombie::dead(){}
+
 void zombie::update()
 {
-    if(delay>0)
-      delay--;
+
 }

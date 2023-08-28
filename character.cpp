@@ -12,6 +12,8 @@ character::~character() {}
 
 void character::update() {}
 
+void character::draw(QPainter *painter) {}
+
 //得到物体的质心坐标
 b2Vec2 character::getPos() {
     return body->GetPosition();
