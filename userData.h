@@ -1,7 +1,7 @@
 #ifndef USERDATA_H
 #define USERDATA_H
 
-const int PPM = 50;
+const int PPM = 30;
 
 enum userDataType {
     //法术

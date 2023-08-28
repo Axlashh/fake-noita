@@ -286,9 +286,9 @@ energyOrb::energyOrb() {
     extraInfo = "缓慢而强大的能量球体";
     type = projectile;
     drawNum = 0;
-    manaCast = 30;
+    manaCast = 20;
     damage = 18;
-    speed = 10;
+    speed = 15;
     spread = 5;
     lifetime = 1200;
     delay = 8;
@@ -306,7 +306,7 @@ energyOrb::energyOrb() {
     isSafe = false;
     triggerShooted = true;
     shootRec = QRectF(QPointF(-r * PPM, -r * PPM), QPointF(r * PPM, r * PPM));
-    bombRec = QRectF(QPointF(-2 * r * PPM, -2 * r * PPM), QPointF(2 * r * PPM, 2 * r * PPM));
+    bombRec = QRectF(QPointF(-1.5 * r * PPM, -1.5  * r * PPM), QPointF(1.5  * r * PPM, 1.5 * r * PPM));
 
     //初始化bodyDef
     bodyDef = new b2BodyDef();

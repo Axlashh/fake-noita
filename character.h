@@ -21,6 +21,7 @@ public:
     void hurt(int n);
     int getDamage();
     int getBlood();
+    bool getDead();
     virtual void move(b2Vec2 pos) = 0;
     float maxxSpeed;
     float maxySpeed;
@@ -37,5 +38,6 @@ protected:
     float sizey;
     int blood;
     int damage;
+    bool isDead;
 };
 #endif // CHARACTER_H

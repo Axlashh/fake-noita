@@ -77,6 +77,8 @@ private:
 
     int monsterRefresh;
     const int mr = 120;
+
+    int killAmount;
 };
 
 class playerContactListener : public b2ContactListener {

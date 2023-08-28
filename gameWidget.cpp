@@ -43,7 +43,7 @@ gameWidget::gameWidget(QWidget *parent) :
     this->menu = new pauseWidget(this, player);
     menu->hide();
     monsterRefresh = 0;
-    new zombie(world, b2Vec2(15.0f, 20.0f));
+    killAmount = 0;
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [this]() {
@@ -77,10 +77,6 @@ void gameWidget::paintEvent(QPaintEvent* event) {
         // 清空背景
         painter.fillRect(rect(), Qt::white);
 
-        // 绘制地面
-//        painter.setPen(Qt::black);
-//        painter.drawLine(0, ground->GetPosition().y * PPM, width(), ground->GetPosition().y * PPM);
-
         //绘制世界中的人物和法术
         for (auto it = world->GetBodyList(); it != nullptr;) {
             struct::userData* ud = reinterpret_cast<struct::userData*>(it->GetUserData().pointer);
@@ -101,13 +97,12 @@ void gameWidget::paintEvent(QPaintEvent* event) {
                 it = it->GetNext();
                 break;
             case userDataType::monster:
-                auto ppppp = reinterpret_cast<class::zombie*>(ud->p);
-                ppppp->draw(&painter);
+                reinterpret_cast<character*>(ud->p)->draw(&painter);
                 it = it->GetNext();
                 break;
-//            default:
-//                it = it->GetNext();
-//                break;
+            default:
+                it = it->GetNext();
+                break;
             }
         }
 
@@ -153,9 +148,9 @@ void gameWidget::initializeWorld() {
 }
 
 void gameWidget::createMap() {
-    for (int i = 0; i < 30; i++) {
-        tile *p = new tile(world, i + 0.5, 0.5);
-        tile *pp = new tile(world, 0.5, i + 0.5);
+    for (int i = 0; i < 50; i++) {
+        new tile(world, i + 0.5, 0.5);
+        new tile(world, 0.5, i + 0.5);
     }
 }
 
@@ -172,10 +167,10 @@ void gameWidget::myUpdate() {
 
     world->Step(1.0f / 60.0f, 6, 2);
 
-//    if (monsterRefresh++ >= mr) {
-//        monsterRefresh = 0;
-//        zombie(world, b2Vec2(15.0f, 20.0f));
-//    }
+    if (monsterRefresh++ >= mr) {
+        monsterRefresh = 0;
+        new zombie(world, b2Vec2(rand() % 40, 20.0f));
+    }
 }
 void gameWidget::wandUpdate() {
     //对玩家的每根法杖进行更新
@@ -184,7 +179,6 @@ void gameWidget::wandUpdate() {
             player->getWand(i)->update();
         }
     }
-
     auto wd = player->getWand(0);
     //如果鼠标左键被按下，发射！
     if (isPressed[26] && wd->readyToShoot()) {
@@ -193,7 +187,21 @@ void gameWidget::wandUpdate() {
     }
 }
 void gameWidget::monsterUpdate(){
-
+    for (auto it = world->GetBodyList(); it != nullptr;) {
+        struct::userData* ud = reinterpret_cast<struct::userData*>(it->GetUserData().pointer);
+        if (ud->type == userDataType::monster) {
+            auto tp = reinterpret_cast<character*>(ud->p);
+            if (tp->getDead()) {
+                auto tmp = it;
+                world->DestroyBody(tmp);
+                delete tp;
+                it = it->GetNext();
+                continue;
+            }
+            tp->update();
+        }
+        it = it->GetNext();
+    }
 }
 void gameWidget::keyPressEvent(QKeyEvent *event) {
     int key = event->key();

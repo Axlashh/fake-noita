@@ -43,3 +43,7 @@ int character::getDamage() {
 int character::getBlood() {
     return blood;
 }
+
+bool character::getDead() {
+    return isDead;
+}

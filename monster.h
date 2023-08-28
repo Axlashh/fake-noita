@@ -16,7 +16,6 @@ public:
 private:
     int delay;
     void dead() override;
-
 };
 
 

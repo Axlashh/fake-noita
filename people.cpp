@@ -37,7 +37,7 @@ people::people()
         wnd[i] = nullptr;
     }
     img = QImage("../23su/source/image/player.png").mirrored(false, true);
-    backpackNum = 10;
+    backpackNum = 11;
     backpack = new class::spell*[backpackNum];
     for (int i = 0; i < backpackNum; i++)
         backpack[i] = nullptr;
@@ -104,6 +104,12 @@ void people::swap(int wand1, int wand2, int spell1, int spell2) {
         auto tmp = wnd[wand1]->getSpell(spell1);
         wnd[wand1]->addSpell(wnd[wand2]->getSpell(spell2), spell1);
         wnd[wand2]->addSpell(tmp, spell2);
+    }
+
+    //清除垃圾桶
+    if (backpack[10] != nullptr) {
+        delete backpack[10];
+        backpack[10] = nullptr;
     }
 }
 

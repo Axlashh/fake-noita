@@ -253,7 +253,10 @@ void backpackSlot::paintEvent(QPaintEvent *event) {
         di->show();
     }
     else {
-        painter.fillRect(rect(), Qt::white);
+        if (wandNum == 10)
+            painter.drawImage(rect(), gb);
+        else
+            painter.fillRect(rect(), Qt::white);
     }
 }
 
@@ -291,6 +294,10 @@ pauseWidget::pauseWidget(QWidget *parent, people *p) :
     this->setGeometry(0, 0, parent->width(), parent->height());
     msg = new messageBox(this);
     msg->setPos(800, 100);
+
+    garbageBin = new backpackSlot(this, pak, player, 10);
+    garbageBin->setPos(1150, 20);
+
     wand1 = new backpackSlot*[2];
     wand1[0] = new backpackSlot(this, wad, player, 0);
     wand1[1] = new backpackSlot(this, wad, player, 1);
@@ -357,6 +364,7 @@ void pauseWidget::paintEvent(QPaintEvent *event) {
             }
             wand1[i]->show();
         }
+
         for (int i = 0; i < 10; i++) {
             class::spell* tw = player->getPak(i);
             backpackSpells[i]->clear();
@@ -366,6 +374,8 @@ void pauseWidget::paintEvent(QPaintEvent *event) {
             }
             backpackSpells[i]->show();
         }
+
+        garbageBin->clear();
         upd = false;
     }
 }

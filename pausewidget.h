@@ -99,6 +99,7 @@ private:
     void paintEvent(QPaintEvent *event) 		override;
     void enterEvent(QEvent *event)		 		override;
     void leaveEvent(QEvent *event)				override;
+    QImage gb = QImage("../23su/source/image/garbageBin.png");
 
 signals:
     void dropped();
@@ -124,6 +125,7 @@ private:
     backpackSlot **wand1;
     backpackSlot ***wandSpells1;
     backpackSlot **backpackSpells;
+    backpackSlot *garbageBin;
     messageBox *msg;
     QTimer *timer;
 
