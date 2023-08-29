@@ -337,6 +337,10 @@ pauseWidget::~pauseWidget()
     delete ui;
 }
 
+void pauseWidget::myUpdate() {
+    upd = true;
+}
+
 void pauseWidget::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     painter.fillRect(rect(), QColor(0, 0, 0, 150));

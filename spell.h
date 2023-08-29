@@ -20,7 +20,6 @@ class wand;
 class spell
 {
 public:
-    //法术发射
     virtual ~spell();
     //计算本次法术释放的情况
     virtual void compute(wand *wd, mod m = {1, 1});
@@ -89,7 +88,7 @@ protected:
 //	伤害修正倍率
     float damageRate;
 //	该法术将触发的法术
-    spell **spl;
+    spell **spl = nullptr;
 //	图片
     QImage img;
 //	爆炸图片
@@ -99,12 +98,12 @@ protected:
 //	物体半径
     float r;
 //	body
-    b2Body *body;
-    b2BodyUserData *ud;
+    b2Body *body = nullptr;
+    b2BodyUserData *ud = nullptr;
 //	物体基本信息
-    b2BodyDef *bodyDef;
+    b2BodyDef *bodyDef = nullptr;
 //	物体fixture
-    b2FixtureDef *fixDef;
+    b2FixtureDef *fixDef = nullptr;
 
 //	爆炸后绘图需要的变量
     bool isBomb;

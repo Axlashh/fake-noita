@@ -24,6 +24,8 @@
 #include <box2d/box2d.h>
 #include "userData.h"
 #include "pauseWidget.h"
+#include "rewardwidget.h"
+
 namespace Ui {
 class gameWidget;
 }
@@ -56,15 +58,17 @@ private:
     void wandUpdate();
     void monsterUpdate();
     void myUpdate();
+    void start();
     QTransform *transformer;
     QImage playerImg;
     QTimer *timer;
     b2World *world;
     people *player;
-    zombie *monster;
     b2Body *ground;
     bool isPaused;
     pauseWidget *menu;
+    rewardWidget *rwd;
+    bool rwdupd;
     QPixmap bufferPixmap;
 
     //前26个代表字母，第27个代表鼠标
@@ -79,6 +83,7 @@ private:
     const int mr = 120;
 
     int killAmount;
+    QLabel *killAmountLabel;
 };
 
 class playerContactListener : public b2ContactListener {

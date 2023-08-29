@@ -63,6 +63,16 @@ void people::addWand(wand *w, int n) {
     this->wnd[n] = w;
 }
 
+bool people::addSpell(class::spell *spl) {
+    for (int i = 0; i < backpackNum - 1; i++) {
+        if (backpack[i] == nullptr) {
+            backpack[i] = spl;
+            return true;
+        }
+    }
+    return false;
+}
+
 wand* people::getWand(int n) {
     if (n >= maxWand || n < 0) return nullptr;
     return wnd[n];

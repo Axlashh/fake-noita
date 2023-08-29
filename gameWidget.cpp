@@ -40,10 +40,19 @@ gameWidget::gameWidget(QWidget *parent) :
     pppp->addSpell(new sparkBolt(), 9);
     player->addWand(aaaa, 0);
     player->addWand(pppp, 1);
-    this->menu = new pauseWidget(this, player);
+
+    menu = new pauseWidget(this, player);
     menu->hide();
+
+    rwd = new rewardWidget(this, player);
+    rwd->hide();
+    rwdupd = false;
+    connect(rwd, &rewardWidget::ok, this, &gameWidget::start);
     monsterRefresh = 0;
     killAmount = 0;
+    killAmountLabel = new QLabel(this);
+    killAmountLabel->setGeometry(500, 10, 300, 30);
+    killAmountLabel->setText("杀敌数:" + QString::number(killAmount));
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [this]() {
@@ -171,7 +180,23 @@ void gameWidget::myUpdate() {
         monsterRefresh = 0;
         new zombie(world, b2Vec2(rand() % 40, 20.0f));
     }
+
+    if (killAmount % 3 != 0) {
+        rwdupd = false;
+    }
+
+    if (!rwdupd && killAmount != 0 && (killAmount) % 3 == 0) {
+        isPaused = true;
+        rwdupd = true;
+        rwd->myUpdate();
+        rwd->show();
+    }
 }
+
+void gameWidget::start() {
+    isPaused = false;
+}
+
 void gameWidget::wandUpdate() {
     //对玩家的每根法杖进行更新
     for (int i = 0; i < player->getMaxWand(); i++) {
@@ -186,12 +211,15 @@ void gameWidget::wandUpdate() {
         wd->shoot(xx + 1.3 * cs, yy + 1.3 * sn, degree, world);
     }
 }
+
+//对每个怪物进行更新
 void gameWidget::monsterUpdate(){
     for (auto it = world->GetBodyList(); it != nullptr;) {
         struct::userData* ud = reinterpret_cast<struct::userData*>(it->GetUserData().pointer);
         if (ud->type == userDataType::monster) {
             auto tp = reinterpret_cast<character*>(ud->p);
             if (tp->getDead()) {
+                killAmount++;
                 auto tmp = it;
                 world->DestroyBody(tmp);
                 delete tp;
@@ -202,6 +230,7 @@ void gameWidget::monsterUpdate(){
         }
         it = it->GetNext();
     }
+    killAmountLabel->setText("杀敌数:" + QString::number(killAmount));
 }
 void gameWidget::keyPressEvent(QKeyEvent *event) {
     int key = event->key();
@@ -211,6 +240,9 @@ void gameWidget::keyPressEvent(QKeyEvent *event) {
             menu->hide();
             isPaused = false;
         } else {
+            menu->myUpdate();
+            menu->update();
+            QCoreApplication::processEvents();
             menu->show();
             isPaused = true;
         }

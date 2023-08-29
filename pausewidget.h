@@ -115,6 +115,7 @@ public:
     explicit pauseWidget(QWidget *parent = nullptr, people *p = nullptr);
     ~pauseWidget();
     void setPlayer(people *p);
+    void myUpdate();
 
 protected:
     people *player;

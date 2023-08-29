@@ -225,6 +225,7 @@ sparkBolt::sparkBolt() {
     speedRate = 1;
     damageRate = 1;
     spl = nullptr;
+    body = nullptr;
     r = 0.1;
     img = QImage("../23su/source/image/Spell_light_bullet.png");
     shootImg = QImage("../23su/source/image/Spell_light_bullet.png");
@@ -296,6 +297,7 @@ energyOrb::energyOrb() {
     speedRate = 1;
     damageRate = 1;
     spl = nullptr;
+    body = nullptr;
     r = 0.8;
     img = QImage("../23su/source/image/Spell_slow_bullet.png");
     shootImg = QImage("../23su/source/image/Spell_slow_bullet_shoot.png");
@@ -367,6 +369,7 @@ chain::chain() {
     speedRate = 1;
     damageRate = 1;
     spl = nullptr;
+    body = nullptr;
     r = 0.3;
     imgs = new QImage[3];
     imgs[0] = QImage("../23su/source/image/chain0.png");

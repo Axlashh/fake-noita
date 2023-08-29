@@ -53,8 +53,11 @@ void zombie::draw(QPainter *painter)
     painter->drawImage(QRectF(QPointF(body->GetPosition().x * PPM - this->getSize().x * PPM, body->GetPosition().y * PPM - this->getSize().y * PPM),
                              QPointF(body->GetPosition().x * PPM + this->getSize().x * PPM, body->GetPosition().y * PPM + this->getSize().y * PPM)), this->img);
 }
+
 void zombie::move(b2Vec2 pos) {
+
 }
+
 void zombie::dead(){
     isDead = true;
 }

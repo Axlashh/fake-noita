@@ -13,6 +13,7 @@ public:
     people(b2World *world, b2Vec2 pos);
     wand* getWand(int n);
     void addWand(wand *w, int n);
+    bool addSpell(class::spell *spl);
     void draw(QPainter *painter)	override;
     class::spell* getPak(int n);
     void swap(int wand1, int wand2, int spell1, int spell2);
