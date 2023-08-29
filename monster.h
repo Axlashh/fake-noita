@@ -10,12 +10,11 @@ public:
     ~zombie()   override;
     zombie(b2World *world, b2Vec2 pos);
     void draw(QPainter *painter)  override;
-    void update()   override;
-    void move(b2Vec2 pos)	override;
+    void update(const b2Vec2 &&pos)   override;
 
 private:
-    int delay;
     void dead() override;
+
 };
 
 

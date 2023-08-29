@@ -179,7 +179,7 @@ void gameWidget::myUpdate() {
     if (monsterRefresh++ >= mr) {
         monsterRefresh = 0;
         new zombie(world, b2Vec2(rand() % 40, 20.0f));
-    }
+   }
 
     if (killAmount % 3 != 0) {
         rwdupd = false;
@@ -218,6 +218,7 @@ void gameWidget::monsterUpdate(){
         struct::userData* ud = reinterpret_cast<struct::userData*>(it->GetUserData().pointer);
         if (ud->type == userDataType::monster) {
             auto tp = reinterpret_cast<character*>(ud->p);
+             tp->update(player->getPos());
             if (tp->getDead()) {
                 killAmount++;
                 auto tmp = it;
@@ -226,10 +227,12 @@ void gameWidget::monsterUpdate(){
                 it = it->GetNext();
                 continue;
             }
-            tp->update();
+
         }
-        it = it->GetNext();
+        it = it->GetNext();      
     }
+
+
     killAmountLabel->setText("杀敌数:" + QString::number(killAmount));
 }
 void gameWidget::keyPressEvent(QKeyEvent *event) {
@@ -272,10 +275,15 @@ void playerContactListener::BeginContact(b2Contact *contact) {
     b2Body *bodyB = contact->GetFixtureB()->GetBody();
     userData* udA = reinterpret_cast<userData*>(bodyA->GetUserData().pointer);
     userData* udB = reinterpret_cast<userData*>(bodyB->GetUserData().pointer);
-    if ((udA->type == userDataType::player && udB->type == userDataType::ground && bodyA->GetPosition().y > bodyB->GetPosition().y) ||
-        (udB->type == userDataType::player && udA->type == userDataType::ground && bodyB->GetPosition().y > bodyA->GetPosition().y)) {
+    if (((udA->type == userDataType::player || udA->type == userDataType::monster) &&
+        udB->type == userDataType::ground && bodyA->GetPosition().y > bodyB->GetPosition().y) ||
+        ((udB->type == userDataType::player || udB->type == userDataType::monster) &&
+        udA->type == userDataType::ground && bodyB->GetPosition().y > bodyA->GetPosition().y)) {
          //人物与地面相撞
-        player->setOnGround();
+        if (udB->type == userDataType::ground)
+            reinterpret_cast<character*>(udA->p)->setOnGround();
+        else
+            reinterpret_cast<character*>(udB->p)->setOnGround();
     } else if (udA->type == userDataType::spell && udB->type == userDataType::spell) {
         //法术与法术相撞
         contact->SetEnabled(false);

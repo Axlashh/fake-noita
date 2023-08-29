@@ -11,8 +11,9 @@ character::character(b2World *world, b2Vec2 pos) : character() {
 character::~character() {}
 
 void character::update() {}
-
+void character::update(const b2Vec2 &&pos){}
 void character::draw(QPainter *painter) {}
+
 
 //得到物体的质心坐标
 b2Vec2 character::getPos() {
@@ -46,4 +47,12 @@ int character::getBlood() {
 
 bool character::getDead() {
     return isDead;
+}
+
+int character::getDelay() {
+    return delay;
+}
+
+void character::setOnGround() {
+    onGround = true;
 }

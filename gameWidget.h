@@ -80,7 +80,7 @@ private:
     float radian;
 
     int monsterRefresh;
-    const int mr = 120;
+    const int mr = 180;
 
     int killAmount;
     QLabel *killAmountLabel;

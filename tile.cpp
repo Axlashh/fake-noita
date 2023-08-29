@@ -20,7 +20,7 @@ tile::tile()
     tileShape->SetAsBox(size, size);
     fixDef = new b2FixtureDef();
     fixDef->shape = tileShape;	//形状
-    fixDef->friction = 0;		//摩擦系数
+    fixDef->friction = 1;		//摩擦系数
     fixDef->restitution = 0; 		//弹性
     fixDef->density = 0;			//密度
     fixDef->isSensor = false;

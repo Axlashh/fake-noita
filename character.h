@@ -14,6 +14,7 @@ public:
     virtual ~character() = 0;
     character(b2World *world, b2Vec2 pos);
     virtual void update();
+    virtual void update(const b2Vec2 &&pos);
     b2Vec2 getPos();
     b2Vec2 getSize();
     b2Vec2 getSpeed();
@@ -22,7 +23,8 @@ public:
     int getDamage();
     int getBlood();
     bool getDead();
-    virtual void move(b2Vec2 pos) = 0;
+    int getDelay();
+    void setOnGround();
     float maxxSpeed;
     float maxySpeed;
 
@@ -39,5 +41,8 @@ protected:
     int blood;
     int damage;
     bool isDead;
+    int delay;
+    int bdelay;
+    bool onGround;
 };
 #endif // CHARACTER_H
