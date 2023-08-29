@@ -14,7 +14,7 @@ messageBox::messageBox(QWidget *parent) :
         mainLayout->addWidget(labels + i);
     }
     this->setLayout(mainLayout);
-    font.setFamily("Microsoft YaHei");
+    font.setFamily("IPix");
     font.setPointSize(14); // 设置字体大小
     font.setBold(true);    // 设置字体粗细
     for (int i = 0; i < 11; i++) {

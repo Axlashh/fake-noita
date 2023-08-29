@@ -54,7 +54,7 @@ rewardWidget::rewardWidget(QWidget *parent, people *player) :
     setGeometry(0, 0, parent->width(), parent->height());
 
     QFont font;
-    font.setFamily("SimHei");
+    font.setFamily("IPix");
     font.setPointSize(16);
 
     errorMsg = new QLabel(this);
@@ -63,7 +63,7 @@ rewardWidget::rewardWidget(QWidget *parent, people *player) :
 
     //定义主信息
     mainMsg = new QLabel(this);
-    mainMsg->setGeometry(450, 50, 400, 100);
+    mainMsg->setGeometry(450, 20, 400, 100);
     mainMsg->setFont(font);
     mainMsg->setText("挑选一个法术加入你的背包");
     msg = new messageBox(this);
@@ -71,8 +71,9 @@ rewardWidget::rewardWidget(QWidget *parent, people *player) :
 
     //定义跳过按钮
     exitButton = new QPushButton(this);
-    exitButton->setGeometry(550, 700, 100, 30);
+    exitButton->setGeometry(550, 700, 130, 50);
     exitButton->setText("跳过");
+    exitButton->setFont(font);
     connect(exitButton, &QPushButton::clicked, this, &rewardWidget::onExitButtonClicked);
 
     for (int i = 0; i < 3; i++) {
@@ -122,6 +123,7 @@ void rewardWidget::myUpdate() {
         }
         ic[i]->sp = spl;
     }
+    errorMsg->setText("");
 }
 
 void rewardWidget::clicked(int num) {

@@ -56,7 +56,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    handTrack.py
+    handTrack.py \
+    source/IPix.ttf
 
 #win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../23su/extern/lib/ -lbox2
 #else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../23su/extern/lib/ -lbox2d

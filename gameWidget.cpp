@@ -50,7 +50,10 @@ gameWidget::gameWidget(QWidget *parent) :
     connect(rwd, &rewardWidget::ok, this, &gameWidget::start);
     monsterRefresh = 0;
     killAmount = 0;
+    QFont font;
+    font.setFamily("IPix");
     killAmountLabel = new QLabel(this);
+    killAmountLabel->setFont(font);
     killAmountLabel->setGeometry(500, 10, 300, 30);
     killAmountLabel->setText("杀敌数:" + QString::number(killAmount));
 
@@ -185,12 +188,6 @@ void gameWidget::myUpdate() {
         rwdupd = false;
     }
 
-    if (!rwdupd && killAmount != 0 && (killAmount) % 3 == 0) {
-        isPaused = true;
-        rwdupd = true;
-        rwd->myUpdate();
-        rwd->show();
-    }
 }
 
 void gameWidget::start() {
@@ -221,6 +218,14 @@ void gameWidget::monsterUpdate(){
              tp->update(player->getPos());
             if (tp->getDead()) {
                 killAmount++;
+
+                if (!rwdupd && killAmount != 0 && (killAmount) % 3 == 0) {
+                    isPaused = true;
+                    rwdupd = true;
+                    rwd->myUpdate();
+                    rwd->show();
+                }
+
                 auto tmp = it;
                 world->DestroyBody(tmp);
                 delete tp;
