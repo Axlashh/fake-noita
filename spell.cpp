@@ -205,6 +205,10 @@ void spell::bomb(int deg) {
         triggerPos.y += 0.01 * tv * sin(triggerDeg * M_PI / 180);
     }
     if (body != nullptr){
+        b2Fixture* tf = body->GetFixtureList();
+        b2Filter tfi = tf->GetFilterData();
+        tfi.maskBits = 0x0000;
+        tf->SetFilterData(tfi);
         body->SetAwake(false);
     }
 }

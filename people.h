@@ -17,7 +17,7 @@ public:
     void draw(QPainter *painter)	override;
     class::spell* getPak(int n);
     void swap(int wand1, int wand2, int spell1, int spell2);
-    void move(bool isPressed[]);
+    void move(bool isPressed[], const QPoint &mousePoint);
     int getMaxWand();
     int getJump();
 
@@ -25,6 +25,17 @@ protected:
     void dead()	override;
 
 private:
+    QImage moveImg[4];
+    QImage riseImg;
+    QImage fallImg;
+    bool faceLeft;
+    bool walkLeft;
+    bool rising;
+    bool still;
+    int switchImg;
+    int nowImg;
+    int frameCount;
+
     float jump;
     int maxWand;
     int backpackNum;

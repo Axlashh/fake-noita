@@ -160,10 +160,7 @@ void gameWidget::initializeWorld() {
 }
 
 void gameWidget::createMap() {
-    for (int i = 0; i < 50; i++) {
-        new tile(world, i + 0.5, 0.5);
-        new tile(world, 0.5, i + 0.5);
-    }
+    new tile(world, 16, 1, 16, 0.5);
 }
 
 void gameWidget::myUpdate() {
@@ -172,7 +169,7 @@ void gameWidget::myUpdate() {
     degree = radian * (180.0 / M_PI);
 
     //计算人物移动
-    player->move(isPressed);
+    player->move(isPressed, mousePos);
 
     wandUpdate();
     monsterUpdate();

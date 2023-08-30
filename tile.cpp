@@ -2,7 +2,6 @@
 
 tile::tile()
 {
-    img = QImage("../23su/source/image/basic_tile.png");
     bodyDef = new b2BodyDef();
     ud = new b2BodyUserData();
     userData *uud = new userData();
@@ -16,10 +15,9 @@ tile::tile()
     bodyDef->userData = *ud;
 
     //定义fixtureDef
-    b2PolygonShape *tileShape = new b2PolygonShape();
-    tileShape->SetAsBox(size, size);
+    tileShape = new b2PolygonShape();
+
     fixDef = new b2FixtureDef();
-    fixDef->shape = tileShape;	//形状
     fixDef->friction = 1;		//摩擦系数
     fixDef->restitution = 0; 		//弹性
     fixDef->density = 0;			//密度
@@ -28,8 +26,11 @@ tile::tile()
     body = nullptr;
 }
 
-tile::tile(b2World *world, float x, float y)  : tile()
+tile::tile(b2World *world, float x, float y, float hx, float hy)  : tile()
 {
+    sizex = hx, sizey = hy;
+    tileShape->SetAsBox(sizex, sizey);
+    fixDef->shape = tileShape;
     bodyDef->position.Set(x, y);
     body = world->CreateBody(bodyDef);
     body->CreateFixture(fixDef);
@@ -40,6 +41,7 @@ tile::~tile()
     delete ud;
     delete bodyDef;
     delete fixDef;
+    delete tileShape;
     body->GetWorld()->DestroyBody(body);
 }
 
@@ -47,6 +49,8 @@ void tile::draw(QPainter *painter)
 {
     painter->save();
     painter->translate(body->GetPosition().x * PPM, body->GetPosition().y * PPM);
-    painter->drawImage(QRectF(QPointF(-size * PPM, -size * PPM), QPointF(size * PPM, size * PPM)), img);
+    painter->setPen(QPen(QColor(0xb6, 0x32, 0x31), 2));
+    painter->fillRect(QRectF(QPointF(-sizex * PPM, -sizey * PPM), QPointF(sizex * PPM, sizey * PPM)), QColor(0xa1, 0xa3, 0xb4));
+    painter->drawRect(QRectF(QPointF(-sizex * PPM, -sizey * PPM), QPointF(sizex * PPM, sizey * PPM)));
     painter->restore();
 }

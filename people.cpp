@@ -36,7 +36,22 @@ people::people()
     for (int i = 0; i < maxWand; i++) {
         wnd[i] = nullptr;
     }
-    img = QImage("../23su/source/image/player.png").mirrored(false, true);
+
+    img = QImage("../23su/source/image/player_still.png").mirrored(false, true);
+    moveImg[0] = QImage("../23su/source/image/player_move1.png").mirrored(false, true);
+    moveImg[1] = QImage("../23su/source/image/player_move2.png").mirrored(false, true);
+    moveImg[2] = QImage("../23su/source/image/player_move3.png").mirrored(false, true);
+    moveImg[3] = QImage("../23su/source/image/player_move4.png").mirrored(false, true);
+    riseImg = QImage("../23su/source/image/player_rise.png").mirrored(false, true);
+    fallImg = QImage("../23su/source/image/player_fall.png").mirrored(false, true);
+    faceLeft = false;
+    walkLeft = false;
+    rising = false;
+    still = true;
+    switchImg = 8;
+    nowImg = 0;
+    frameCount = 0;
+
     backpackNum = 11;
     backpack = new class::spell*[backpackNum];
     for (int i = 0; i < backpackNum; i++)
@@ -79,8 +94,31 @@ wand* people::getWand(int n) {
 }
 
 void people::draw(QPainter *painter) {
-    painter->drawImage(QRectF(QPointF(body->GetPosition().x * PPM - this->getSize().x * PPM, body->GetPosition().y * PPM - this->getSize().y * PPM),
-                             QPointF(body->GetPosition().x * PPM + this->getSize().x * PPM, body->GetPosition().y * PPM + this->getSize().y * PPM)), this->img);
+    painter->save();
+    painter->translate(body->GetPosition().x * PPM, body->GetPosition().y * PPM);
+    QImage timg;
+    if (rising) {
+        timg = riseImg;
+    } else if (!onGround) {
+        timg = fallImg;
+    } else if (still) {
+        timg = img;
+    } else {
+        if (++frameCount >= switchImg) {
+            //如果面对方向与走路方向相反，就倒着放
+            if (!(faceLeft ^ walkLeft)) {
+                nowImg = (nowImg + 3) % 4;
+            } else {
+                nowImg = (nowImg + 1) % 4;
+            }
+            frameCount = 0;
+        }
+        timg = moveImg[nowImg];
+    }
+    if (!faceLeft) timg = timg.mirrored(true, false);
+    painter->drawImage(QRectF(QPointF(- this->getSize().x * PPM, - this->getSize().y * PPM),
+                             QPointF(this->getSize().x * PPM, this->getSize().y * PPM)), timg);
+    painter->restore();
 }
 
 class::spell* people::getPak(int n) {
@@ -123,10 +161,14 @@ void people::swap(int wand1, int wand2, int spell1, int spell2) {
     }
 }
 
-void people::move(bool isPressed[]) {
+void people::move(bool isPressed[], const QPoint &mousePoint) {
+    if (body->GetPosition().x * PPM < mousePoint.x()) faceLeft = true;
+    else faceLeft = false;
+
     float xv = body->GetLinearVelocity().x;
     float yv = body->GetLinearVelocity().y;
     if (isPressed[0]) {
+        walkLeft = false;
         if (xv >= -maxxSpeed) {
             if (xv > 0) body->ApplyForceToCenter(b2Vec2(-1000, 0), true);
             body->ApplyForceToCenter(b2Vec2(-1000, 0), true);
@@ -134,6 +176,7 @@ void people::move(bool isPressed[]) {
         }
     }
     if (isPressed[3]) {
+        walkLeft = true;
         if (xv <= maxxSpeed) {
             if (xv < 0) body->ApplyForceToCenter(b2Vec2(1000, 0), true);
             body->ApplyForceToCenter(b2Vec2(1000, 0), true);
@@ -145,10 +188,21 @@ void people::move(bool isPressed[]) {
             body->ApplyForceToCenter(b2Vec2(0, 600 + (maxySpeed - (yv > 0 ? yv : 0)) * 300), true);
 //            jump -= 0.5;
             onGround = false;
+            rising = true;
         }
-    } else if (jump < 100){
-        if (onGround) jump += 5;
-        else jump += 0.1;
+    } else {
+        rising = false;
+        if (jump < 100){
+            if (onGround) jump += 5;
+            else jump += 0.1;
+        }
+    }
+
+    still = false;
+    if (!isPressed[0] && !isPressed[3] && !isPressed['w' - 'a']) {
+        nowImg = 0;
+        frameCount = 0;
+        still = true;
     }
 }
 
