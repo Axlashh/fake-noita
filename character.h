@@ -25,12 +25,15 @@ public:
     bool getDead();
     int getDelay();
     void setOnGround();
+    void setIsGround();
     float maxxSpeed;
     float maxySpeed;
 
 
 protected:
     QImage img;
+    QImage leftimg;
+    QImage rightimg;
     virtual void dead() = 0;
     b2Body *body;
     b2BodyDef *bodyDef;
@@ -44,5 +47,18 @@ protected:
     int delay;
     int bdelay;
     bool onGround;
+    bool isGround;
+};
+
+
+class myRayCastCallback: public b2RayCastCallback
+{
+public:
+    myRayCastCallback(character *parent);
+    float ReportFixture(b2Fixture* fixture, const b2Vec2& point,
+                        const b2Vec2& normal, float fraction)   override;
+    void setIsGround(character *p);
+private:
+    character *parent;
 };
 #endif // CHARACTER_H

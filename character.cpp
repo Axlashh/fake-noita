@@ -56,3 +56,29 @@ int character::getDelay() {
 void character::setOnGround() {
     onGround = true;
 }
+
+void character::setIsGround() {
+    isGround = true;
+}
+
+myRayCastCallback::myRayCastCallback(character *parent) :
+    parent(parent)
+{}
+
+float myRayCastCallback::ReportFixture(b2Fixture* fixture, const b2Vec2& point,
+                    const b2Vec2& normal, float fraction)
+{
+    userData *ud = reinterpret_cast<userData*>(fixture->GetBody()->GetUserData().pointer);
+    if(ud->type == userDataType::ground)
+    {
+        setIsGround(parent);
+        fraction=0;
+    }
+    else
+        fraction=1;
+    return fraction;
+};
+
+void myRayCastCallback::setIsGround(character *p) {
+    p->setIsGround();
+}

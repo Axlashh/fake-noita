@@ -3,6 +3,7 @@
 #include"character.h"
 #include"userData.h"
 
+
 class zombie: public character
 {
 public:
@@ -11,10 +12,9 @@ public:
     zombie(b2World *world, b2Vec2 pos);
     void draw(QPainter *painter)  override;
     void update(const b2Vec2 &&pos)   override;
-
 private:
     void dead() override;
-
+    myRayCastCallback * rcc;
 };
 
 

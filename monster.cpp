@@ -5,10 +5,13 @@ zombie::zombie()
     blood = 50;
     isDead = false;
     onGround = false;
+    isGround = false;
     damage = 50;
-    bdelay = 180;
+    bdelay = 120;
     delay  = 0;
     img = QImage("../23su/source/image/zombie.png").mirrored(false, true);
+    leftimg=QImage("../23su/source/image/zombie.png").mirrored(true, true);
+    rightimg=QImage("../23su/source/image/zombie.png").mirrored(false, true);
     bodyDef = new b2BodyDef();
     ud = new b2BodyUserData();
     userData * uud =new userData();
@@ -30,10 +33,11 @@ zombie::zombie()
     fixDef->shape = playerShape;	//形状
     fixDef->friction = 0.5;		    //摩擦系数
     fixDef->restitution = 0; 		//弹性
-    fixDef->density = 30;			//密度
+    fixDef->density = 20;			//密度
     fixDef->isSensor = false;       //传感器
 
     body = nullptr;
+    rcc = new myRayCastCallback(this);
 }
 
 
@@ -70,15 +74,28 @@ void zombie::update(const b2Vec2 &&pos)
     }
     float x = pos.x;
     float y = pos.y;
-    if(onGround&&delay==0)
+    float radian = std::atan2(y - body->GetPosition().y , x - body->GetPosition().x );
+    int degree = radian * (180.0 / M_PI);
+    float sn=sin(radian);
+    float cs=cos(radian);
+    body->GetWorld()->RayCast(rcc,pos,body->GetPosition());
+    if(onGround && delay==0 && !isGround)
     {
-       if(x>body->GetPosition().x)
+       if((x-body->GetPosition().x)*(x-body->GetPosition().x)+(y-body->GetPosition().y)*(y-body->GetPosition().y)<1000)
        {
-           body->ApplyLinearImpulseToCenter(b2Vec2(200,300),true);
-
-           //img = QImage("../23su/source/image/zombie.png").mirrored(true, true);
+           onGround = false;
+           if(x>body->GetPosition().x)
+           {
+               img = leftimg;
+               body->ApplyLinearImpulseToCenter(b2Vec2(400*cs,400*sn),true);
+           }
+           if(x<body->GetPosition().x)
+           {
+               img = rightimg;
+               body->ApplyLinearImpulseToCenter(b2Vec2(400*cs,400*sn),true);
+           }
        }
-       if(x<body->GetPosition().x)
-           body->ApplyLinearImpulseToCenter(b2Vec2(-200,300),true);
     }
+    isGround = false;
 }
+

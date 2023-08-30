@@ -284,7 +284,7 @@ void playerContactListener::BeginContact(b2Contact *contact) {
         udB->type == userDataType::ground && bodyA->GetPosition().y > bodyB->GetPosition().y) ||
         ((udB->type == userDataType::player || udB->type == userDataType::monster) &&
         udA->type == userDataType::ground && bodyB->GetPosition().y > bodyA->GetPosition().y)) {
-         //人物与地面相撞
+         //活物与地面相撞
         if (udB->type == userDataType::ground)
             reinterpret_cast<character*>(udA->p)->setOnGround();
         else

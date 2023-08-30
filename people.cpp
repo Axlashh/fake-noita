@@ -143,7 +143,7 @@ void people::move(bool isPressed[]) {
     if (isPressed['w' - 'a']) {
         if (jump > 0) {
             body->ApplyForceToCenter(b2Vec2(0, 600 + (maxySpeed - (yv > 0 ? yv : 0)) * 300), true);
-            jump -= 0.5;
+//            jump -= 0.5;
             onGround = false;
         }
     } else if (jump < 100){
