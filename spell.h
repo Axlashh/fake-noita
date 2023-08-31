@@ -197,4 +197,11 @@ public:
     damagePlus* copy()	override;
 };
 
+class slimeBall : public spell
+{
+public :
+    slimeBall();
+    slimeBall* copy()	override;
+};
+
 #endif // SPELL_H

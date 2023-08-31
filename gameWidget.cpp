@@ -178,7 +178,7 @@ void gameWidget::myUpdate() {
 
     if (monsterRefresh++ >= mr) {
         monsterRefresh = 0;
-        new zombie(world, b2Vec2(rand() % 40, 20.0f));
+        new greenCutie(world, b2Vec2(rand() % 40, 20.0f));
    }
 
     if (killAmount % 3 != 0) {

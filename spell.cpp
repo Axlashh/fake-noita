@@ -260,6 +260,8 @@ sparkBolt::sparkBolt() {
     fixDef->shape = cs;
     fixDef->density = 0.5f;
     fixDef->friction = 0;
+    fixDef->filter.categoryBits = 0x0001;
+    fixDef->filter.maskBits = 0xfffe;
 }
 
 sparkBolt* sparkBolt::copy() {
@@ -294,7 +296,7 @@ energyOrb::energyOrb() {
     manaCast = 20;
     damage = 18;
     speed = 15;
-    spread = 5;
+    spread = 10;
     lifetime = 1200;
     delay = 8;
     rechargeTime = 0;
@@ -333,6 +335,8 @@ energyOrb::energyOrb() {
     fixDef->shape = cs;
     fixDef->density = 0.5f;
     fixDef->friction = 0;
+    fixDef->filter.categoryBits = 0x0001;
+    fixDef->filter.maskBits = 0xfffe;
 }
 
 energyOrb* energyOrb::copy() {
@@ -498,5 +502,61 @@ damagePlus::damagePlus() {
 damagePlus* damagePlus::copy() {
     damagePlus* t = new damagePlus(*this);
     t->spl = new spell*[drawNum];
+    return t;
+}
+
+slimeBall::slimeBall() {
+    name = "粘液球 怪物专属";
+    extraInfo = "湿漉漉的";
+    type = projectile;
+    drawNum = 0;
+    manaCast = 10;
+    damage = 10;
+    speed = 20;
+    spread = 1;
+    lifetime = 1200;
+    delay = 3;
+    rechargeTime = 0;
+    speedRate = 1;
+    damageRate = 1;
+    spl = nullptr;
+    body = nullptr;
+    r = 0.3;
+    img = QImage("../23su/source/image/Spell_slimeball.png");
+    shootImg = QImage("../23su/source/image/Spell_slimeball.png");
+    bombImg = QImage("../23su/source/image/slbbb.png");
+    isBomb = false;
+    bombTime = 5;
+    isDead = false;
+    isSafe = false;
+    triggerShooted = true;
+    shootRec = QRectF(QPointF(-10.5f / 2.5f * r * PPM, -r * PPM), QPointF(r * PPM, r * PPM));
+    bombRec = QRectF(QPointF(-1.5 * r * PPM, -1.5 * r * PPM), QPointF(1.5 * r * PPM, 1.5 * r * PPM));
+
+    //初始化bodyDef
+    bodyDef = new b2BodyDef();
+    ud = new b2BodyUserData();
+    userData *uud = new userData();
+    uud->p = (unsigned long long)this;
+    uud->type = userDataType::spell;
+    ud->pointer = (uintptr_t) uud;
+    bodyDef->type = b2_dynamicBody;
+    bodyDef->fixedRotation = false;
+    bodyDef->userData = *ud;
+
+    //初始化fixtureDef
+    fixDef = new b2FixtureDef();
+    b2CircleShape *cs = new b2CircleShape();
+    cs->m_radius = r;
+    fixDef->shape = cs;
+    fixDef->density = 0.5f;
+    fixDef->friction = 0;
+    fixDef->filter.categoryBits = 0x0001;
+    fixDef->filter.maskBits = 0xfffe;
+}
+
+slimeBall* slimeBall::copy() {
+    slimeBall* t = new slimeBall(*this);
+    this->copyTo(t);
     return t;
 }

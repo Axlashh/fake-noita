@@ -22,6 +22,7 @@ tile::tile()
     fixDef->restitution = 0; 		//弹性
     fixDef->density = 0;			//密度
     fixDef->isSensor = false;
+    fixDef->filter.categoryBits = 0x0002;
 
     body = nullptr;
 }

@@ -1,19 +1,9 @@
 #include "character.h"
 
-character::character() {
-    body = nullptr;
-    blood = 100;
-}
-
-character::character(b2World *world, b2Vec2 pos) : character() {
-}
-
 character::~character() {}
 
 void character::update() {}
-void character::update(const b2Vec2 &&pos){}
-void character::draw(QPainter *painter) {}
-
+void character::update(const b2Vec2 &pos){}
 
 //得到物体的质心坐标
 b2Vec2 character::getPos() {
@@ -28,6 +18,14 @@ b2Vec2 character::getSize() {
 
 b2Vec2 character::getSpeed() {
     return body->GetLinearVelocity();
+}
+
+void character::draw(QPainter *painter) {
+    painter->save();
+    painter->translate(body->GetPosition().x * PPM, body->GetPosition().y * PPM);
+    painter->drawImage(QRectF(QPointF(-this->getSize().x * PPM, -this->getSize().y * PPM),
+                             QPointF(this->getSize().x * PPM, this->getSize().y * PPM)), img);
+    painter->restore();
 }
 
 void character::hurt(int n) {
@@ -60,6 +58,10 @@ void character::setRcc()
 
 void character::setOnGround() {
     onGround = true;
+}
+
+void character::dead() {
+    isDead = true;
 }
 
 myRayCastCallback::myRayCastCallback(character *parent) :

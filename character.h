@@ -10,11 +10,9 @@
 class character {
 
 public:
-    character();
     virtual ~character() = 0;
-    character(b2World *world, b2Vec2 pos);
     virtual void update();
-    virtual void update(const b2Vec2 &&pos);
+    virtual void update(const b2Vec2 &pos);
     b2Vec2 getPos();
     b2Vec2 getSize();
     b2Vec2 getSpeed();
@@ -34,11 +32,12 @@ protected:
     QImage img;
     QImage leftimg;
     QImage rightimg;
-    virtual void dead() = 0;
+    virtual void dead();
     b2Body *body;
     b2BodyDef *bodyDef;
     b2FixtureDef *fixDef;
     b2BodyUserData *ud;
+    userData *uud;
     float sizex;
     float sizey;
     int blood;
