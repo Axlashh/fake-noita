@@ -44,6 +44,8 @@ gameWidget::gameWidget(QWidget *parent) :
     menu = new pauseWidget(this, player);
     menu->hide();
 
+    dew = new deadWidget(this);
+    dew->hide();
     rwd = new rewardWidget(this, player);
     rwd->hide();
     rwdW = new rewardWidget(this, player, slotType::wad);
@@ -203,7 +205,11 @@ void gameWidget::myUpdate() {
         isPaused = true;
         rwdW->show();
     }
-
+    if(player->getBlood() <= 0)
+    {
+        isPaused=true;
+         dew->show();
+    }
 }
 
 void gameWidget::start() {

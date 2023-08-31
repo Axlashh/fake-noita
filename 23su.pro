@@ -17,6 +17,7 @@ LIBS += -L$$PWD/../23su/extern/lib/ -lbox2d
 
 SOURCES += \
     character.cpp \
+    deadwidget.cpp \
     gameWidget.cpp \
     loginWidget.cpp \
     main.cpp \
@@ -31,6 +32,7 @@ SOURCES += \
 
 HEADERS += \
     character.h \
+    deadwidget.h \
     gameWidget.h \
     loginWidget.h \
     monster.h \

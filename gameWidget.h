@@ -25,6 +25,7 @@
 #include "userData.h"
 #include "pauseWidget.h"
 #include "rewardwidget.h"
+#include "deadWidget.h"
 
 namespace Ui {
 class gameWidget;
@@ -69,6 +70,7 @@ private:
     pauseWidget *menu;
     rewardWidget *rwd;
     rewardWidget *rwdW;
+    deadWidget   *dew;
     bool rwdupd;
     bool wandReward;
     QPixmap bufferPixmap;
@@ -88,6 +90,8 @@ private:
 
     int killAmount;
     QLabel *killAmountLabel;
+
+
 };
 
 class playerContactListener : public b2ContactListener {

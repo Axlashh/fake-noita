@@ -22,7 +22,6 @@ public:
     int getJump();
 
 protected:
-    void dead()	override;
 
 private:
     QImage moveImg[4];

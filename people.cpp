@@ -207,9 +207,6 @@ void people::move(bool isPressed[], const QPoint &mousePoint) {
     }
 }
 
-void people::dead() {
-
-}
 
 int people::getJump() {
     return jump;

@@ -365,8 +365,8 @@ void pauseWidget::paintEvent(QPaintEvent *event) {
                     wandSpells1[i][j]->clear();
                     wandSpells1[i][j]->hide();
                 }
+                wand1[i]->show();
             }
-            wand1[i]->show();
         }
 
         for (int i = 0; i < 10; i++) {
