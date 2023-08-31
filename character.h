@@ -24,8 +24,8 @@ public:
     int getBlood();
     bool getDead();
     int getDelay();
+    void setRcc();
     void setOnGround();
-    void setIsGround();
     float maxxSpeed;
     float maxySpeed;
 
@@ -48,6 +48,7 @@ protected:
     int bdelay;
     bool onGround;
     bool isGround;
+    bool rccSuc;
 };
 
 

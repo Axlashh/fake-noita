@@ -53,12 +53,13 @@ int character::getDelay() {
     return delay;
 }
 
-void character::setOnGround() {
-    onGround = true;
+void character::setRcc()
+{
+    rccSuc = true;
 }
 
-void character::setIsGround() {
-    isGround = true;
+void character::setOnGround() {
+    onGround = true;
 }
 
 myRayCastCallback::myRayCastCallback(character *parent) :
@@ -71,14 +72,10 @@ float myRayCastCallback::ReportFixture(b2Fixture* fixture, const b2Vec2& point,
     userData *ud = reinterpret_cast<userData*>(fixture->GetBody()->GetUserData().pointer);
     if(ud->type == userDataType::ground)
     {
-        setIsGround(parent);
+        parent->setRcc();
         fraction=0;
     }
     else
         fraction=1;
     return fraction;
 };
-
-void myRayCastCallback::setIsGround(character *p) {
-    p->setIsGround();
-}

@@ -4,8 +4,9 @@ zombie::zombie()
 {
     blood = 50;
     isDead = false;
+    isGround=false;
     onGround = false;
-    isGround = false;
+    rccSuc=false;
     damage = 50;
     bdelay = 120;
     delay  = 0;
@@ -78,12 +79,30 @@ void zombie::update(const b2Vec2 &&pos)
     int degree = radian * (180.0 / M_PI);
     float sn=sin(radian);
     float cs=cos(radian);
+    onGround = false;
+    isGround = false;
+
+    //检测僵尸与人之间是否有阻挡
     body->GetWorld()->RayCast(rcc,pos,body->GetPosition());
+    if (rccSuc) {
+       isGround = true;
+       rccSuc = false;
+    }
+    //检测是否在地面上
+    b2Vec2 pos1(body->GetPosition().x,body->GetPosition().y-1.1);
+    body->GetWorld()->RayCast(rcc,body->GetPosition(),pos1);
+
+    if (rccSuc) {
+       onGround = true;
+       rccSuc = false;
+       qDebug()<<"000";
+    }
+
+
     if(onGround && delay==0 && !isGround)
     {
        if((x-body->GetPosition().x)*(x-body->GetPosition().x)+(y-body->GetPosition().y)*(y-body->GetPosition().y)<1000)
        {
-           onGround = false;
            if(x>body->GetPosition().x)
            {
                img = leftimg;
@@ -96,6 +115,5 @@ void zombie::update(const b2Vec2 &&pos)
            }
        }
     }
-    isGround = false;
 }
 
