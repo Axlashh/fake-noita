@@ -1,5 +1,6 @@
 #include "monster.h"
 #include"QDebug"
+#define bdata 450
 zombie::zombie()
 {
     blood = 50;
@@ -87,7 +88,6 @@ void zombie::update(const b2Vec2 &pos)
     if (rccSuc) {
        onGround = true;
        rccSuc = false;
-       qDebug()<<"000";
     }
 
     if(onGround && delay==0 && !isGround)
@@ -97,14 +97,29 @@ void zombie::update(const b2Vec2 &pos)
            if(x>body->GetPosition().x)
            {
                img = leftimg;
-               body->ApplyLinearImpulseToCenter(b2Vec2(400*cs,400*sn),true);
+               body->ApplyLinearImpulseToCenter(b2Vec2(bdata*cs,bdata*sn),true);
            }
            if(x<body->GetPosition().x)
            {
                img = rightimg;
-               body->ApplyLinearImpulseToCenter(b2Vec2(400*cs,400*sn),true);
+               body->ApplyLinearImpulseToCenter(b2Vec2(bdata*cs,bdata*sn),true);
            }
        }
+    }
+    if(onGround && isGround && delay==0)
+    {
+       int ra1=rand() % 4+1 ;
+       int ra2=rand() % 2 ;
+       int ra3=ra1;
+       if(ra2==0)
+       {
+           ra1=-ra1;
+           img=rightimg;
+       }
+       else
+          img=leftimg;
+       body->ApplyLinearImpulseToCenter(b2Vec2(70*ra1,70*ra3),true);
+       qDebug()<<ra1;
     }
 }
 

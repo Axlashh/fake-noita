@@ -161,6 +161,7 @@ void gameWidget::initializeWorld() {
 
 void gameWidget::createMap() {
     new tile(world, 16, 1, 16, 0.5);
+    new tile(world, 8 , 5, 5, 0.25);
 }
 
 void gameWidget::myUpdate() {
