@@ -48,7 +48,7 @@ people::people()
     walkLeft = false;
     rising = false;
     still = true;
-    switchImg = 8;
+    switchImg = 10;
     nowImg = 0;
     frameCount = 0;
 
@@ -106,7 +106,7 @@ void people::draw(QPainter *painter) {
     } else {
         if (++frameCount >= switchImg) {
             //如果面对方向与走路方向相反，就倒着放
-            if (!(faceLeft ^ walkLeft)) {
+            if ((faceLeft ^ walkLeft)) {
                 nowImg = (nowImg + 3) % 4;
             } else {
                 nowImg = (nowImg + 1) % 4;
