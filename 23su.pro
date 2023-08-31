@@ -24,7 +24,6 @@ SOURCES += \
     pauseWidget.cpp \
     people.cpp \
     registerWidget.cpp \
-    rewardWidgetW.cpp \
     rewardwidget.cpp \
     spell.cpp \
     tile.cpp \
@@ -38,7 +37,6 @@ HEADERS += \
     pauseWidget.h \
     people.h \
     registerWidget.h \
-    rewardWidgetW.h \
     rewardwidget.h \
     spell.h \
     tile.h \

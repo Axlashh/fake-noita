@@ -14,14 +14,15 @@ class chosenIcon : public QWidget
 {
     Q_OBJECT
 public:
-    explicit chosenIcon(QWidget *parent = nullptr, int num = 0, class::spell *spl = nullptr);
+    explicit chosenIcon(QWidget *parent = nullptr, int num = 0, void *ptr = nullptr, slotType type = slotType::spl);
     ~chosenIcon();
     void setPos(int x, int y);
-    class::spell *sp;
-
+    void *ptr;
 
 private:
     int num;
+    slotType type;
+    QImage img;
 
     void paintEvent(QPaintEvent *event)			override;
     void mousePressEvent(QMouseEvent *event)	override;
@@ -40,7 +41,7 @@ class rewardWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit rewardWidget(QWidget *parent = nullptr, people *player = nullptr);
+    explicit rewardWidget(QWidget *parent = nullptr, people *player = nullptr, slotType type = slotType::spl);
     ~rewardWidget();
     void myUpdate();
 
@@ -57,6 +58,7 @@ protected:
     QLabel *mainMsg;
     QPushButton *exitButton;
     people *player;
+    slotType type;
     void paintEvent(QPaintEvent *event)	override;
 
 

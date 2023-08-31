@@ -68,7 +68,9 @@ private:
     bool isPaused;
     pauseWidget *menu;
     rewardWidget *rwd;
+    rewardWidget *rwdW;
     bool rwdupd;
+    bool wandReward;
     QPixmap bufferPixmap;
 
     //前26个代表字母，第27个代表鼠标

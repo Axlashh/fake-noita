@@ -39,15 +39,19 @@ gameWidget::gameWidget(QWidget *parent) :
     pppp->addSpell(new doubleSpell(), 8);
     pppp->addSpell(new sparkBolt(), 9);
     player->addWand(aaaa, 0);
-    player->addWand(pppp, 1);
+//    player->addWand(pppp, 1);
 
     menu = new pauseWidget(this, player);
     menu->hide();
 
     rwd = new rewardWidget(this, player);
     rwd->hide();
+    rwdW = new rewardWidget(this, player, slotType::wad);
+    rwdW->hide();
+    wandReward = true;
     rwdupd = false;
     connect(rwd, &rewardWidget::ok, this, &gameWidget::start);
+    connect(rwdW, &rewardWidget::ok, this, &gameWidget::start);
     zombieRefresh = 0;
     greenCutieRefresh = 0;
     killAmount = 0;
@@ -192,6 +196,12 @@ void gameWidget::myUpdate() {
 
     if (killAmount % 3 != 0) {
         rwdupd = false;
+    }
+
+    if (wandReward && killAmount >= 20) {
+        wandReward = false;
+        isPaused = true;
+        rwdW->show();
     }
 
 }
