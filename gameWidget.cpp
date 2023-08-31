@@ -48,7 +48,8 @@ gameWidget::gameWidget(QWidget *parent) :
     rwd->hide();
     rwdupd = false;
     connect(rwd, &rewardWidget::ok, this, &gameWidget::start);
-    monsterRefresh = 0;
+    zombieRefresh = 0;
+    greenCutieRefresh = 0;
     killAmount = 0;
     QFont font;
     font.setFamily("IPix");
@@ -161,7 +162,9 @@ void gameWidget::initializeWorld() {
 
 void gameWidget::createMap() {
     new tile(world, 16, 1, 16, 0.5);
-    new tile(world, 8 , 5, 5, 0.25);
+    new tile(world, 8, 4, 2, 0.25);
+    new tile(world, -1, 10, 1, 11);
+    new tile(world, 33, 10, 1, 11);
 }
 
 void gameWidget::myUpdate() {
@@ -177,10 +180,15 @@ void gameWidget::myUpdate() {
 
     world->Step(1.0f / 60.0f, 6, 2);
 
-    if (monsterRefresh++ >= mr) {
-        monsterRefresh = 0;
-        new greenCutie(world, b2Vec2(rand() % 40, 20.0f));
-   }
+    if (zombieRefresh++ >= zr) {
+        zombieRefresh = 0;
+        new zombie(world, b2Vec2(rand() % 36, 10.0f));
+    }
+
+    if (greenCutieRefresh++ >= gr) {
+        greenCutieRefresh = 0;
+        new greenCutie(world, b2Vec2(rand() % 36, 15.0f));
+    }
 
     if (killAmount % 3 != 0) {
         rwdupd = false;
@@ -234,7 +242,6 @@ void gameWidget::monsterUpdate(){
         }
         it = it->GetNext();      
     }
-
 
     killAmountLabel->setText("杀敌数:" + QString::number(killAmount));
 }

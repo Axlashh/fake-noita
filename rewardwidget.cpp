@@ -4,8 +4,7 @@ chosenIcon::chosenIcon(QWidget *parent, int num, class::spell *spl) :
     QWidget(parent),
     sp(spl),
     num(num)
-{
-}
+{ }
 
 chosenIcon::~chosenIcon() {}
 

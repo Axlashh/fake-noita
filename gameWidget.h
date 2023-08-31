@@ -79,8 +79,10 @@ private:
     int degree;
     float radian;
 
-    int monsterRefresh;
-    const int mr = 210;
+    int zombieRefresh;
+    const int zr = 210;
+    int greenCutieRefresh;
+    const int gr = 600;
 
     int killAmount;
     QLabel *killAmountLabel;
