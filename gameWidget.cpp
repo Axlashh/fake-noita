@@ -21,6 +21,7 @@ gameWidget::gameWidget(QWidget *parent) :
     initializeWorld();
     bufferPixmap = QPixmap(size());
     bufferPixmap.fill(Qt::white);
+
     wand* aaaa = new normalWand();
     wand* pppp = new longWand();
     aaaa->addSpell(new chain(), 0);
@@ -40,6 +41,7 @@ gameWidget::gameWidget(QWidget *parent) :
     pppp->addSpell(new sparkBolt(), 9);
     player->addWand(aaaa, 0);
 //    player->addWand(pppp, 1);
+    backgroundImg = QImage("../23su/source/image/background.png").mirrored();
 
     menu = new pauseWidget(this, player);
     menu->hide();
@@ -94,7 +96,7 @@ void gameWidget::paintEvent(QPaintEvent* event) {
 //	  还用了一个缓冲pixmap来储存绘出的图，不然一暂停游戏画面就没了
     if (!isPaused) {
         // 清空背景
-        painter.fillRect(rect(), Qt::white);
+        painter.drawImage(rect(), backgroundImg);
 
         //绘制世界中的人物和法术
         for (auto it = world->GetBodyList(); it != nullptr;) {

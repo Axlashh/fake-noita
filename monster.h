@@ -14,6 +14,7 @@ public:
     void update(const b2Vec2 &pos)   override;
 private:
     myRayCastCallback *rcc;
+    const float impulse = 500;
 };
 
 class greenCutie : public character

@@ -69,7 +69,9 @@ void zombie::update(const b2Vec2 &pos)
     }
     float x = pos.x;
     float y = pos.y;
-    float radian = std::atan2(y - body->GetPosition().y , x - body->GetPosition().x );
+    float bx = body->GetPosition().x;
+    float by = body->GetPosition().y;
+    float radian = std::atan2(y - by , x - bx);
     float sn=sin(radian);
     float cs=cos(radian);
     onGround = false;
@@ -81,10 +83,10 @@ void zombie::update(const b2Vec2 &pos)
        isGround = true;
        rccSuc = false;
     }
-    //检测是否在地面上
-    b2Vec2 pos1(body->GetPosition().x,body->GetPosition().y-1.1);
-    body->GetWorld()->RayCast(rcc,body->GetPosition(),pos1);
 
+    //检测是否在地面上
+    b2Vec2 pos1(bx, by - 1.1);
+    body->GetWorld()->RayCast(rcc,body->GetPosition(),pos1);
     if (rccSuc) {
        onGround = true;
        rccSuc = false;
@@ -92,17 +94,22 @@ void zombie::update(const b2Vec2 &pos)
 
     if(onGround && delay==0 && !isGround)
     {
-       if((x-body->GetPosition().x)*(x-body->GetPosition().x)+(y-body->GetPosition().y)*(y-body->GetPosition().y)<1000)
+       if((x - bx) * (x - bx) + (y - by) * (y - by) < 1000)
        {
-           if(x>body->GetPosition().x)
-           {
+           if (x > bx)
                img = leftimg;
-               body->ApplyLinearImpulseToCenter(b2Vec2(bdata*cs,bdata*sn),true);
-           }
-           if(x<body->GetPosition().x)
-           {
+           else
                img = rightimg;
-               body->ApplyLinearImpulseToCenter(b2Vec2(bdata*cs,bdata*sn),true);
+           double x0 = x - bx, y0 = y - by, v = impulse / body->GetMass();
+           double t1 = asin((y0 * v * v + 9.8 * x0 * x0) / sqrt(x0 * x0 + y0 * y0) / v / v * (x0 > 0 ? 1 : -1));
+           if (t1 < 0) t1 += M_PI;
+           double t2 = atan(y0 / x0);
+           if (t2 < 0) t2 += M_PI;
+           if (isnan(t1) || isnan(t2) || t2 == 0) {
+               body->ApplyLinearImpulseToCenter(b2Vec2(impulse * cs, impulse * sn),true);
+           } else {
+               double delta = (t1 + t2) / 2;
+               body->ApplyLinearImpulseToCenter(b2Vec2(impulse * cos(delta), impulse * sin(delta)),true);
            }
        }
     }

@@ -50,8 +50,8 @@ void tile::draw(QPainter *painter)
 {
     painter->save();
     painter->translate(body->GetPosition().x * PPM, body->GetPosition().y * PPM);
-    painter->setPen(QPen(QColor(0xb6, 0x32, 0x31), 2));
-    painter->fillRect(QRectF(QPointF(-sizex * PPM, -sizey * PPM), QPointF(sizex * PPM, sizey * PPM)), QColor(0xa1, 0xa3, 0xb4));
+    painter->setPen(QPen(QColor(0x40, 0x21, 0x40), 2));
+    painter->fillRect(QRectF(QPointF(-sizex * PPM, -sizey * PPM), QPointF(sizex * PPM, sizey * PPM)), QColor(0x21, 0x1a, 0x2f));
     painter->drawRect(QRectF(QPointF(-sizex * PPM, -sizey * PPM), QPointF(sizex * PPM, sizey * PPM)));
     painter->restore();
 }

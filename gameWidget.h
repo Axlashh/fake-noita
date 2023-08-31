@@ -90,8 +90,7 @@ private:
 
     int killAmount;
     QLabel *killAmountLabel;
-
-
+    QImage backgroundImg;
 };
 
 class playerContactListener : public b2ContactListener {
