@@ -9,6 +9,8 @@ beginWidget::beginWidget(QWidget *parent) :
     QFont font;
     font.setFamily("IPix");
     font.setPointSize(96);
+    this->grabKeyboard();
+
 }
 
 void beginWidget::paintEvent(QPaintEvent *event)
@@ -19,17 +21,14 @@ void beginWidget::paintEvent(QPaintEvent *event)
 
 void beginWidget::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Space) {
-    qDebug()<<"000";
     emit ok();
     this->hide();
-    }
 }
 
 void beginWidget::mousePressEvent(QMouseEvent *event)
 {
-//    emit ok();
-//    this->hide();
+    emit ok();
+    this->hide();
 }
 
 beginWidget::~beginWidget()
