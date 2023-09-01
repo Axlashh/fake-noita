@@ -3,7 +3,8 @@
 
 #include <QWidget>
 #include <QPainter>
-#include<QMessageBox>
+#include<QLabel>
+#include<QPushButton>
 class deadWidget : public QWidget
 {
     Q_OBJECT
@@ -14,6 +15,9 @@ public:
 
 private:
     void paintEvent(QPaintEvent *event)			override;
+    QImage backgroundImg ;
+    QLabel *deadLabel;
+    QPushButton *deadButton;
 };
 
 #endif // DEADWIDGET_H

@@ -8,7 +8,7 @@ zombie::zombie()
     isGround=false;
     onGround = false;
     rccSuc=false;
-    damage = 50;
+    damage = 15;
     bdelay = 120;
     delay  = 0;
     img = QImage("../23su/source/image/zombie.png").mirrored(false, true);
@@ -126,7 +126,6 @@ void zombie::update(const b2Vec2 &pos)
        else
           img=leftimg;
        body->ApplyLinearImpulseToCenter(b2Vec2(70*ra1,70*ra3),true);
-       qDebug()<<ra1;
     }
 }
 

@@ -2,6 +2,7 @@
 #define LOGINWIDGET_H
 
 #include <QWidget>
+#include <QImage>
 #include "gameWidget.h"
 #include "ui_gameWidget.h"
 #include"registerwidget.h"

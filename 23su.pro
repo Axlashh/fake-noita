@@ -16,6 +16,7 @@ LIBS += -L$$PWD/../23su/extern/lib/ -lbox2d
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    begingWidget.cpp \
     character.cpp \
     deadwidget.cpp \
     gameWidget.cpp \
@@ -31,6 +32,7 @@ SOURCES += \
     wand.cpp
 
 HEADERS += \
+    beginWidget.h \
     character.h \
     deadwidget.h \
     gameWidget.h \

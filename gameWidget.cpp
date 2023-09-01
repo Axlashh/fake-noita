@@ -17,7 +17,7 @@ gameWidget::gameWidget(QWidget *parent) :
     ui(new Ui::gameWidget)
 {
     ui->setupUi(this);
-    isPaused = false;
+    isPaused = true;
     initializeWorld();
     bufferPixmap = QPixmap(size());
     bufferPixmap.fill(Qt::white);
@@ -46,6 +46,8 @@ gameWidget::gameWidget(QWidget *parent) :
     menu = new pauseWidget(this, player);
     menu->hide();
 
+    bnw = new beginWidget(this);
+    connect(bnw, &beginWidget::ok, this, &gameWidget::start);
     dew = new deadWidget(this);
     dew->hide();
     rwd = new rewardWidget(this, player);
@@ -260,9 +262,10 @@ void gameWidget::monsterUpdate(){
         }
         it = it->GetNext();      
     }
-
+    killAmountLabel->setStyleSheet("color:rgb(255,255,255)");
     killAmountLabel->setText("杀敌数:" + QString::number(killAmount));
 }
+
 void gameWidget::keyPressEvent(QKeyEvent *event) {
     int key = event->key();
     if (key >= 0x41 && key <= 0x5a) isPressed[key - 0x41] = true;

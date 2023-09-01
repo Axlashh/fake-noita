@@ -77,7 +77,6 @@ void loginWidget::on_loginButton_clicked()
 
 void loginWidget::on_pushButton_clicked()
 {
-
     /*QSqlQueryModel *model=new QSqlQueryModel;
     model->setQuery("select *from user");
     model->setHeaderData(0,Qt::Horizontal,tr("accountname"));

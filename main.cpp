@@ -10,8 +10,8 @@ int main(int argc, char *argv[])
     QFontDatabase::addApplicationFont("../23su/source/IPix.ttf");
     gameWidget aaa;
     aaa.show();
-//  loginWidget k;
-//    k.show();
+    //loginWidget k;
+    //k.show();
 
     return a.exec();
 }

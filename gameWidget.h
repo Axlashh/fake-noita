@@ -26,6 +26,7 @@
 #include "pauseWidget.h"
 #include "rewardwidget.h"
 #include "deadWidget.h"
+#include "beginWidget.h"
 
 namespace Ui {
 class gameWidget;
@@ -71,6 +72,7 @@ private:
     rewardWidget *rwd;
     rewardWidget *rwdW;
     deadWidget   *dew;
+    beginWidget  *bnw;
     bool rwdupd;
     bool wandReward;
     QPixmap bufferPixmap;
