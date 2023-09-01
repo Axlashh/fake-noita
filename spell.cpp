@@ -384,6 +384,7 @@ chain::chain() {
     imgs[1] = QImage("../23su/source/image/chain1.png");
     imgs[2] = QImage("../23su/source/image/chain2.png");
     img = QImage("../23su/source/image/Spell_chainsaw.png");
+    bombImg = imgs[0];
     isBomb = false;
     bombTime = 5;
     isDead = false;

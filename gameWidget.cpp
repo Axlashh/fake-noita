@@ -209,15 +209,16 @@ void gameWidget::myUpdate() {
         isPaused = true;
         rwdW->show();
     }
-    if(player->getBlood() <= 0)
-    {
-        isPaused=true;
-         dew->show();
-    }
+//    if(player->getBlood() <= 0)
+//    {
+//        isPaused=true;
+//         dew->show();
+//    }
 }
 
 void gameWidget::start() {
     isPaused = false;
+    this->grabKeyboard();
 }
 
 void gameWidget::wandUpdate() {

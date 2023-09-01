@@ -11,9 +11,9 @@ zombie::zombie()
     damage = 15;
     bdelay = 120;
     delay  = 0;
-    img = QImage("../23su/source/image/zombie.png").mirrored(false, true);
-    leftimg=QImage("../23su/source/image/zombie.png").mirrored(true, true);
-    rightimg=QImage("../23su/source/image/zombie.png").mirrored(false, true);
+    img = QImage("../23su/source/image/zombie.png").mirrored(true, true);
+    leftimg=QImage("../23su/source/image/zombie.png").mirrored(false, true);
+    rightimg=QImage("../23su/source/image/zombie.png").mirrored(true, true);
     bodyDef = new b2BodyDef();
     ud = new b2BodyUserData();
     uud =new userData();
@@ -85,8 +85,10 @@ void zombie::update(const b2Vec2 &pos)
     }
 
     //检测是否在地面上
-    b2Vec2 pos1(bx, by - 1.1);
+    b2Vec2 pos1(bx - 0.5, by - 1.1);
+    b2Vec2 pos2(bx + 0.5, by - 1.1);
     body->GetWorld()->RayCast(rcc,body->GetPosition(),pos1);
+    body->GetWorld()->RayCast(rcc,body->GetPosition(),pos2);
     if (rccSuc) {
        onGround = true;
        rccSuc = false;
