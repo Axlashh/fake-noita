@@ -4,7 +4,7 @@ beginWidget::beginWidget(QWidget *parent) :
     QWidget(parent)
 {
     setGeometry(parent->rect());
-    backgroundImg = QImage("../23su/source/image/background.png").mirrored(false,false);
+    backgroundImg = QImage("../23su/source/image/start.png").mirrored(false,false);
 
     QFont font;
     font.setFamily("IPix");
